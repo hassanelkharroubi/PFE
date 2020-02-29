@@ -2,4 +2,5 @@
     <string name="app_name">OnMyWay</string>
     <string name="password">Mot de passe</string>
     <string name="username">Utilisateur</string>
+    <string name="forgetpassword">Email ou mot de passe oublié ?</string>
 </resources>
