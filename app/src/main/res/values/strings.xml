@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">OnMyWay</string>
+    <string name="password">Mot de passe</string>
+    <string name="username">Utilisateur</string>
+</resources>
