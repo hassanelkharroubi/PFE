@@ -1,5 +1,6 @@
 package com.example.onmyway;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.os.Build;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,9 +26,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import dmax.dialog.SpotsDialog;
+
+
 public class Login extends AppCompatActivity {
 
     private Toolbar toolbar;
+    //ProgressDialog pd;
+    //inherited from ProgressDialog
+    SpotsDialog pd;
+
     private FirebaseAuth mAuth;
     private static final String TAG="login";
 
@@ -55,6 +64,9 @@ public class Login extends AppCompatActivity {
         editTextPassword=findViewById(R.id.password);
 
 
+
+
+
     }
     //we don't need here onCreateOptionMenu method
     @Override
@@ -70,19 +82,29 @@ public class Login extends AppCompatActivity {
     }
 
     public void login(View view) {
+
+        new SpotsDialog.Builder()
+                .setContext(this)
+                .setTheme(R.style.CustomPD)
+                .build()
+                .show();
+
         email=editTextEmail.getText().toString();
         password=editTextPassword.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful())
                         {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            Toast.makeText(Login.this, "Authentication success",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "Authentication success",Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(Login.this,Home.class));
+                            finish();
                           //  FirebaseUser user = mAuth.getCurrentUser();
                           //  updateUI(user);
                         }

@@ -25,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import dmax.dialog.SpotsDialog;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -69,10 +71,15 @@ public class RegisterActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
 }
 
-    public void regiter(View view) {
+    public void register(View view) {
+
 
         email=editTextEmail.getText().toString().trim();
         password=editTextPassword.getText().toString().trim();
+        new SpotsDialog.Builder()
+                .setContext(this).setMessage("veuillez attendre...")
+                .build()
+                .show();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

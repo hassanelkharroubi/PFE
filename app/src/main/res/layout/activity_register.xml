@@ -80,7 +80,7 @@
             android:elevation="40dp"
             android:fontFamily="sans-serif"
             android:text="inscription"
-            android:onClick="regiter"
+            android:onClick="register"
             android:textColor="#fff"
             android:textSize="16sp"
             android:textStyle="bold" />

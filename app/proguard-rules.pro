@@ -21,3 +21,6 @@
 #-renamesourcefileattribute SourceFile
 -keepattributes Signature
 -keepattributes *Annotation*
+-keep class dmax.dialog.** {
+    *;
+}
