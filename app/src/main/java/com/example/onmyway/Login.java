@@ -1,6 +1,6 @@
 package com.example.onmyway;
 
-import android.app.ProgressDialog;
+
 import android.content.Intent;
 
 import android.os.Build;
@@ -83,14 +83,15 @@ public class Login extends AppCompatActivity {
 
     public void login(View view) {
 
+
+
+        email=editTextEmail.getText().toString();
+        password=editTextPassword.getText().toString();
         new SpotsDialog.Builder()
                 .setContext(this)
                 .setTheme(R.style.CustomPD)
                 .build()
                 .show();
-
-        email=editTextEmail.getText().toString();
-        password=editTextPassword.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

@@ -51,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.driver));
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         editTextEmail=findViewById(R.id.email);
@@ -77,7 +78,8 @@ public class RegisterActivity extends AppCompatActivity {
         email=editTextEmail.getText().toString().trim();
         password=editTextPassword.getText().toString().trim();
         new SpotsDialog.Builder()
-                .setContext(this).setMessage("veuillez attendre...")
+                .setContext(this)
+                .setTheme(R.style.CustomPD).setMessage("veuillez attendre")
                 .build()
                 .show();
 
