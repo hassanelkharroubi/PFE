@@ -23,6 +23,8 @@
             />
 
         <EditText
+
+            android:focusable="true"
             android:id="@+id/et-Email"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -35,6 +37,7 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/edit"
             android:padding="13dp"
+            android:elevation="10dp"
             />
 
         <EditText
@@ -48,6 +51,7 @@
             android:drawableLeft="@drawable/ic_lock_black_24dp"
             android:drawablePadding="10dp"
             android:layout_marginTop="15dp"
+            android:elevation="10dp"
             android:background="@drawable/edit"
             android:padding="13dp"
             />
@@ -55,6 +59,7 @@
             android:id="@+id/confirmpass"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:elevation="10dp"
             android:inputType="textPassword"
             android:hint="@string/confirmpasswd"
             android:textColorHint="@color/forText"
@@ -72,7 +77,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:background="@drawable/button"
-
+            android:elevation="40dp"
             android:fontFamily="sans-serif"
             android:text="inscription"
             android:textColor="#fff"
