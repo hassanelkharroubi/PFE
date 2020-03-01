@@ -11,13 +11,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:orientation="vertical"
         android:layout_gravity="center"
         >
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:src="@drawable/transportation_logo"
             android:layout_gravity="center"
             />
@@ -25,7 +25,7 @@
         <EditText
 
             android:focusable="true"
-            android:id="@+id/et-Email"
+            android:id="@+id/email"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -37,11 +37,11 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/edit"
             android:padding="13dp"
-            android:elevation="10dp"
+            android:elevation="2dp"
             />
 
         <EditText
-            android:id="@+id/et-pass"
+            android:id="@+id/password"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -51,15 +51,15 @@
             android:drawableLeft="@drawable/ic_lock_black_24dp"
             android:drawablePadding="10dp"
             android:layout_marginTop="15dp"
-            android:elevation="10dp"
+            android:elevation="2dp"
             android:background="@drawable/edit"
             android:padding="13dp"
             />
         <EditText
-            android:id="@+id/confirmpass"
+            android:id="@+id/confirmpassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
+            android:elevation="2dp"
             android:inputType="textPassword"
             android:hint="@string/confirmpasswd"
             android:textColorHint="@color/forText"
@@ -80,6 +80,7 @@
             android:elevation="40dp"
             android:fontFamily="sans-serif"
             android:text="inscription"
+            android:onClick="regiter"
             android:textColor="#fff"
             android:textSize="16sp"
             android:textStyle="bold" />

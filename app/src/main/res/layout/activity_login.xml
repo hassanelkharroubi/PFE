@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/login"
     android:orientation="vertical"
     tools:context=".Login">
     <include
@@ -34,7 +35,7 @@
             />
 
         <EditText
-            android:id="@+id/et-Email"
+            android:id="@+id/email"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -49,7 +50,7 @@
             />
 
         <EditText
-            android:id="@+id/et-pass"
+            android:id="@+id/password"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -71,7 +72,7 @@
             android:textColor="#fff"
             android:layout_marginTop="15dp"
             android:background="@drawable/button"
-            android:onClick="toLogin"
+            android:onClick="login"
             />
 
         <TextView

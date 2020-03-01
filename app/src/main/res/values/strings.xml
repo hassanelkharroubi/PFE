@@ -4,4 +4,5 @@
     <string name="username">Utilisateur</string>
     <string name="forgetpassword">Email ou mot de passe oublié ?</string>
     <string name="confirmpasswd">confirmer mot de passe</string>
+    <string name="driver">ajouter neveau chauffeur</string>
 </resources>
