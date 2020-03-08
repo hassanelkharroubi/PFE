@@ -5,4 +5,6 @@
     <string name="forgetpassword">Email ou mot de passe oublié ?</string>
     <string name="confirmpasswd">confirmer mot de passe</string>
     <string name="driver">ajouter neveau chauffeur</string>
+    <string name="title_activity_maps">Map</string>
+
 </resources>

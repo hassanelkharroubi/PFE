@@ -1,6 +1,7 @@
 package com.example.onmyway;
 
 
+import android.Manifest;
 import android.content.Intent;
 
 import android.os.Build;
@@ -52,6 +53,9 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        startActivity(new Intent(Login.this, MapsActivity.class));
+
     //get toolbar_layout
         toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -104,7 +108,7 @@ public class Login extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             Toast.makeText(Login.this, "Authentication success",Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Login.this,Home.class));
+                            startActivity(new Intent(Login.this, MapsActivity.class));
                             finish();
                           //  FirebaseUser user = mAuth.getCurrentUser();
                           //  updateUI(user);
