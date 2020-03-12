@@ -1,16 +1,19 @@
 package com.example.onmyway;
 
 
-import android.Manifest;
+
+import android.content.Context;
 import android.content.Intent;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.text.TextUtils;
+
+import android.util.Patterns;
+
 import android.view.View;
 import android.widget.EditText;
 
@@ -26,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import dmax.dialog.SpotsDialog;
 
@@ -54,13 +58,26 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        startActivity(new Intent(Login.this, MapsActivity.class));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            Intent intent=new Intent(Login.this,Home.class);
+            intent.putExtra("type","administrateur");
+            startActivity(intent);
+            finish();
+
+        }
+
+
+
+
 
     //get toolbar_layout
         toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //on doit programmer le bach home arrow on toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -72,18 +89,7 @@ public class Login extends AppCompatActivity {
 
 
     }
-    //we don't need here onCreateOptionMenu method
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.toolbar,menu);
-
-
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
 
     public void login(View view) {
 
@@ -91,11 +97,21 @@ public class Login extends AppCompatActivity {
 
         email=editTextEmail.getText().toString();
         password=editTextPassword.getText().toString();
+        if(!isEmail(email) || password.isEmpty())
+        {
+            msg("veuillez valider soit email soit le mot de passe");
+            return;
+
+
+        }
+
+        //we have to hide this sportdialog when we don't have connection
         new SpotsDialog.Builder()
                 .setContext(this)
                 .setTheme(R.style.CustomPD)
                 .build()
                 .show();
+
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -105,21 +121,33 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful())
                         {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            Toast.makeText(Login.this, "Authentication success",Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Login.this, MapsActivity.class));
-                            finish();
+                            if(email.equals(Administrateur.email))
+                            {
+                                Intent intent=new Intent(Login.this,Home.class);
+                                intent.putExtra("type","administrateur");
+                                startActivity(intent);
+                                finish();
+
+                            }
+                            else
+                            {
+                                Intent intent=new Intent(Login.this,HomeUser.class);
+                                intent.putExtra("type","user");
+                                intent.putExtra("email",email);
+                                startActivity(intent);
+                                finish();
+
+                            }
+
+
+
                           //  FirebaseUser user = mAuth.getCurrentUser();
                           //  updateUI(user);
                         }
                         else
                             {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(Login.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                         //   updateUI(null);
+                                msg("le mot de passe ou email est incorrect ");
+
                           }
 
                     }
@@ -128,16 +156,26 @@ public class Login extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(item.getItemId()==android.R.id.home)
-        {
-            onBackPressed();
-        }
-        if(item.getItemId()==R.id.ajouter)
-            startActivity(new Intent(this,RegisterActivity.class));
 
-        return super.onOptionsItemSelected(item);
+
+
+    //fonction de verification email
+    public static boolean isEmail(CharSequence target) {
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
+
+    public void msg(String msg)
+    {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+
+    }
+
+
+
+
+
+
 }
+

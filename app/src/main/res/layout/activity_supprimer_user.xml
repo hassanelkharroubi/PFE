@@ -5,15 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Home">
-    <include
-        layout="@layout/toolbar_layout"/>
+    tools:context=".SupprimerUser">
 
-    <TextView
-        android:id="@+id/textView1"
+    <EditText
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal"
-        android:textSize="20sp" />
+        android:ems="10"
+        android:gravity="start"
+        android:hint="supprimer email"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:id="@+id/supprimeruser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="supprimer"
+        android:text="Supprimer" />
 </LinearLayout>
