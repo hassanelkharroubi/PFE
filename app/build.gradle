@@ -34,4 +34,9 @@ dependencies {
 
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
     implementation 'com.google.firebase:firebase-database:16.0.5'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    //this library is for locationProvider
+   // implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+
 }

@@ -72,6 +72,8 @@ public class Home extends AppCompatActivity {
 
         if(item.getItemId()==R.id.chercher)
             startActivity(new Intent(this,MapsActivity.class));
+        if(item.getItemId()==R.id.enligne)
+            startActivity(new Intent(Home.this,ListAllUser.class));
 
 
         return super.onOptionsItemSelected(item);
