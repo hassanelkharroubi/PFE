@@ -29,6 +29,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
     //for spot dialog
+
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
+    implementation 'com.google.firebase:firebase-database:16.0.5'
 }
