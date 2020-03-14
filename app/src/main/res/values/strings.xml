@@ -7,5 +7,6 @@
     <string name="driver">ajouter neveau chauffeur</string>
     <string name="title_activity_maps">Map</string>
     <string name="fullname">Le nom complet</string>
+    <string name="cin">CIN</string>
 
 </resources>

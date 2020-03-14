@@ -21,72 +21,83 @@
             android:src="@drawable/transportation_logo"
             android:layout_gravity="center"
             />
-        <!--
-        <EditText
 
-            android:focusable="true"
+        <EditText
             android:id="@+id/fullname"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:hint="@string/fullname"
-            android:textColorHint="@color/forText"
             android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_person"
-            android:drawablePadding="10dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/edit"
-            android:padding="13dp"
+            android:drawableLeft="@drawable/ic_person"
+            android:drawablePadding="10dp"
             android:elevation="2dp"
-            />
--->
+            android:focusable="true"
+            android:hint="@string/fullname"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:textColorHint="@color/forText" />
+
+        <EditText
+            android:id="@+id/cin"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/edit"
+            android:drawableLeft="@drawable/ic_person"
+            android:drawablePadding="10dp"
+            android:elevation="2dp"
+            android:hint="@string/cin"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:textColorHint="@color/forText" />
+
         <EditText
 
             android:id="@+id/email"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:hint="@string/username"
-            android:textColorHint="@color/forText"
             android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_person"
-            android:drawablePadding="10dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/edit"
-            android:padding="13dp"
+            android:drawableLeft="@drawable/ic_email_black_24dp"
+            android:drawablePadding="10dp"
             android:elevation="2dp"
-            />
+            android:hint="@string/username"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:textColorHint="@color/forText" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="@string/password"
-            android:textColorHint="@color/forText"
             android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/edit"
             android:drawableLeft="@drawable/ic_lock_black_24dp"
             android:drawablePadding="10dp"
-            android:layout_marginTop="15dp"
             android:elevation="2dp"
-            android:background="@drawable/edit"
-            android:padding="13dp"
-            />
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColorHint="@color/forText" />
+
         <EditText
             android:id="@+id/confirmpassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:elevation="2dp"
-            android:inputType="textPassword"
-            android:hint="@string/confirmpasswd"
-            android:textColorHint="@color/forText"
             android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_lock_black_24dp"
-            android:drawablePadding="10dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/edit"
-            android:padding="13dp"
-            />
+            android:drawableLeft="@drawable/ic_lock_black_24dp"
+            android:drawablePadding="10dp"
+            android:elevation="2dp"
+            android:hint="@string/confirmpasswd"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColorHint="@color/forText" />
 
         <Button
             android:layout_width="250dp"
