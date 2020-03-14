@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "161931881821",
+    "firebase_url": "https://on-my-way-17dc2.firebaseio.com",
+    "project_id": "on-my-way-17dc2",
+    "storage_bucket": "on-my-way-17dc2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161931881821:android:8eec369de836ff95fe8cb4",
+        "android_client_info": {
+          "package_name": "com.example.onmyway"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "161931881821-d2vf5n7u05aqh8q8k4813maca6esf89k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.onmyway",
+            "certificate_hash": "bd4666839fca74ad6f795f6831a708082430bb56"
+          }
+        },
+        {
+          "client_id": "161931881821-qqdrr88pmb95ducvv1t239bke8sn1h55.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDke6wx9-DH52wg6Y4TVQf8dlkmZeSy8I0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "161931881821-qqdrr88pmb95ducvv1t239bke8sn1h55.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -16,4 +16,12 @@
         android:layout_marginTop="50dp"
         android:gravity="center_horizontal"
         android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/gps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="enableGPS"
+        android:text="start GPS" />
+
 </LinearLayout>

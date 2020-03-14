@@ -67,8 +67,6 @@ public class RegisterActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar,menu);
         menu.removeItem(R.id.ajouter);
 
-
-
         return super.onCreateOptionsMenu(menu);
 }
 
@@ -101,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+
                             }
 
                         // ...

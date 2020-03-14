@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import android.text.TextUtils;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import android.view.View;
@@ -25,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -48,6 +51,7 @@ public class Login extends AppCompatActivity {
     private String password;
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 
 
@@ -59,14 +63,21 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(!checkPlayServices())
+        {
+            finish();
+
+        }
 
         if (user != null) {
             Intent intent=new Intent(Login.this,Home.class);
             intent.putExtra("type","administrateur");
             startActivity(intent);
-            finish();
+
 
         }
+
+
 
 
 
@@ -170,6 +181,24 @@ public class Login extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
 
+    }
+
+    //check google play services
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+
+                Toast.makeText(this, "This device is not supported.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
 
