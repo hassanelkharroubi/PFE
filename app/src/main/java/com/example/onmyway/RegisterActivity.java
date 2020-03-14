@@ -41,15 +41,23 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference myRef;
 
     private static final String TAG="register";
+    private String cin;
+    private EditText editTextCin;
 
-    private String email;
-    private String password;
-    private String confirmPassword;
-    private EditText editTextEmail;
-    private EditText editTextPassword;
-    private EditText editTextConfirmPassword;
     private EditText editTextFullName;
     private String fullName;
+
+    private String email;
+    private EditText editTextEmail;
+
+    private String password;
+    private EditText editTextPassword;
+
+    private String confirmPassword;
+    private EditText editTextConfirmPassword;
+
+    private User user;
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -80,6 +88,9 @@ public class RegisterActivity extends AppCompatActivity {
         editTextPassword=findViewById(R.id.password);
         editTextConfirmPassword=findViewById(R.id.confirmpassword);
 
+        editTextFullName=findViewById(R.id.fullname);
+        editTextCin=findViewById(R.id.cin);
+
     }
 
     @Override
@@ -96,43 +107,41 @@ public class RegisterActivity extends AppCompatActivity {
     public void register(View view) {
 
 
-        email=editTextEmail.getText().toString().trim();
-        password=editTextPassword.getText().toString();
 
+        if(allInputValid())
+        {
+            new SpotsDialog.Builder()
+                    .setContext(this)
+                    .setTheme(R.style.CustomPD).setMessage("veuillez attendre ..")
+                    .build()
+                    .show();
 
-
-
-
-        new SpotsDialog.Builder()
-                .setContext(this)
-                .setTheme(R.style.CustomPD).setMessage("veuillez attendre")
-                .build()
-                .show();
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful())
-                        {
-                            String fullname="hassan el kharroubi";
-                            String id="zt265568";
-                            myRef.child(id).setValue(new  User(fullname,email,password,id));
-
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            Toast.makeText(RegisterActivity.this, "Authentication success.",Toast.LENGTH_SHORT).show();
-
-                            startActivity(new Intent(RegisterActivity.this,RegisterActivity.class));
-                        }
-                        else
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful())
                             {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                myRef.child(user.getId()).setValue(user);
+                                msg("Authentication success.");
+
+                                startActivity(new Intent(RegisterActivity.this,RegisterActivity.class));
+                            }
+                            else
+                            {
+                                msg("on ne peut pas ajouter neveau utilidateur .");
+
 
                             }
-                    }
-                });
+                        }
+                    });
+
+        }
+        else
+        {
+            msg("veuilew verifier les donnees que vouz avez saisi ..");
+        }
+
 
 
     }
@@ -167,6 +176,27 @@ public class RegisterActivity extends AppCompatActivity {
     public void msg(String msg)
     {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+
+    }
+
+
+    //this method will valid input in the RegisterActivity.java
+    private boolean allInputValid()
+    {
+
+        cin=editTextCin.getText().toString().trim();
+        fullName=editTextFullName.getText().toString().trim();
+        email=editTextEmail.getText().toString().trim();
+        password=editTextPassword.getText().toString();
+        confirmPassword=editTextConfirmPassword.getText().toString();
+       if(!cin.isEmpty() && !fullName.isEmpty() && isEmail(email)
+               && !password.isEmpty() && password.equals(confirmPassword))
+       {
+           user=new User(fullName,email,password,cin);
+           return true;
+       }
+       return  false;
 
 
     }
