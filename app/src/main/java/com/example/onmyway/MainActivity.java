@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     Handler handler;
-    Runnable runnable;
     ImageView img;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

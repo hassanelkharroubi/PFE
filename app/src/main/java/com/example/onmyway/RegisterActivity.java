@@ -150,9 +150,8 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if(item.getItemId()==android.R.id.home)
-        {
-            onBackPressed();
-        }
+            startActivity(new Intent(this,Home.class));
+
         return super.onOptionsItemSelected(item);
     }
 

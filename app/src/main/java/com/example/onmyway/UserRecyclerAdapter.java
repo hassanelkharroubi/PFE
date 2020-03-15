@@ -2,6 +2,8 @@ package com.example.onmyway;
 
 
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +22,12 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     private ArrayList<User> mUsers = new ArrayList<>();
 
 
-    public UserRecyclerAdapter(ArrayList<User> users) {
+
+    public UserRecyclerAdapter(ArrayList<User> users)
+    {
+
         this.mUsers = users;
+
     }
 
 
@@ -38,6 +44,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
         ((ViewHolder)holder).username.setText(mUsers.get(position).getfullName());
         ((ViewHolder)holder).email.setText(mUsers.get(position).getEmail());
+
     }
 
     @Override
@@ -53,10 +60,14 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             super(itemView);
             username = itemView.findViewById(R.id.username);
             email = itemView.findViewById(R.id.email);
+
+
+
         }
 
 
     }
+
 
 }
 

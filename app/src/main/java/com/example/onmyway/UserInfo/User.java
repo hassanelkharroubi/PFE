@@ -1,5 +1,7 @@
 package com.example.onmyway.UserInfo;
 
+import androidx.annotation.NonNull;
+
 public class User {
 
     private String fullName;
@@ -8,6 +10,7 @@ public class User {
     private String id;
     public User()
     {
+        //this Constructor is for DataSnapShot for firebase
         
     }
 
@@ -51,4 +54,5 @@ public class User {
     public void setId(String id) {
         this.id = id;
     }
+
 }

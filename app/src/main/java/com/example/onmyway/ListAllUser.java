@@ -6,56 +6,133 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.onmyway.UserInfo.User;
+import com.google.firebase.FirebaseError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
 
+import dmax.dialog.SpotsDialog;
+
 public class ListAllUser extends AppCompatActivity {
 
+
+
+    private ProgressDialog progressDialog;
+
     private RecyclerView recyclerView;
+
+    private UserRecyclerAdapter adapter;
+
     private Toolbar toolbar;
+
+    private DatabaseReference ref;
 
 
 
     private ArrayList<User> users;
+    private  User user;
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_all_user);
+
+        attendre();
         //get toolbar_layout
         toolbar=findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        ref=FirebaseDatabase.getInstance().getReference().child("Users");
 
+        readFromDataBase();
 
-        recyclerView=findViewById(R.id.recycler);
-
-        users=new ArrayList<User>();
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        users.add(new User("hassan el kharroubi","hassan@gmail.com","jassan123","zt265568"));
-        UserRecyclerAdapter adapter=new UserRecyclerAdapter(users);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
+
+
+    public void readFromDataBase()
+    {
+
+        ref.addValueEventListener(new ValueEventListener(){
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                recyclerView=findViewById(R.id.recycler);
+
+                user=new User();
+
+                users=new ArrayList<>();
+
+
+
+                for (DataSnapshot userSnapshot: dataSnapshot.getChildren())
+                {
+                    user = userSnapshot.getValue(User.class);
+                    users.add(user);
+
+
+                }
+
+
+
+
+                adapter=new UserRecyclerAdapter(users);
+
+                recyclerView.setAdapter(adapter);
+
+                recyclerView.setLayoutManager(new LinearLayoutManager(ListAllUser.this));
+
+                progressDialog.dismiss();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+
+    }
+    public void attendre()
+    {
+        progressDialog=new ProgressDialog(this);
+
+
+        progressDialog.setTitle("chargement");
+        progressDialog.setMessage("veuillez attendre..");
+        progressDialog.show();
+
+
+
+    }
+
+
+
 
 
     @Override
