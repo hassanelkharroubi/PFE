@@ -184,14 +184,18 @@ public class Login extends AppCompatActivity {
     }
 
     //check google play services
-    private boolean checkPlayServices() {
+    private boolean checkPlayServices()
+    {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
+        if (resultCode != ConnectionResult.SUCCESS)
+        {
+            if (apiAvailability.isUserResolvableError(resultCode))
+            {
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                         .show();
-            } else {
+            } else
+                {
 
                 Toast.makeText(this, "This device is not supported.", Toast.LENGTH_SHORT).show();
                 finish();
