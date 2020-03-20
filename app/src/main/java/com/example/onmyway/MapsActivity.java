@@ -52,7 +52,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 10f;
-    private boolean ALL_PERMISSIONS_OK =false ;
     LocationManager locationManager;
 
     private GoogleMap mMap;
@@ -88,6 +87,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        locationRequest();
 
         // Construct a FusedLocationProviderClient.
 
@@ -126,11 +127,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //init googme map
     private void initMap() {
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        locationRequest();
-        //create a Marker on the map
+
         markerOptions = new MarkerOptions();
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
     }
@@ -142,7 +140,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         getDeviceLocation();
-
         updateLocationUI();
 
 
@@ -219,7 +216,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if(mLastKnownLocation!=null)
                             {
                                 moveCamera(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()),DEFAULT_ZOOM);
-                                startLocationUpdates();
+                              //  startLocationUpdates();
                             }
                             else
                             {
@@ -334,7 +331,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onPause() {
         super.onPause();
-     stopLocationUpdates();
+        stopLocationUpdates();
     }
 
     private void stopLocationUpdates() {
