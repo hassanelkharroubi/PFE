@@ -109,13 +109,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-      // locationRequest();
-
-
-        //get map ready to launch
-      //  getLocationPermission();
-
-
 
 /*        locationCallback = new LocationCallback()
         {
@@ -139,6 +132,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //init googme map
     private void initMap() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        locationRequest();
         //create a Marker on the map
         markerOptions = new MarkerOptions();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -316,10 +310,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
-
-
-
-/*
     //location request class
     private void locationRequest() {
         locationRequest = new LocationRequest();
@@ -327,7 +317,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
-*/
+
 
 
 
