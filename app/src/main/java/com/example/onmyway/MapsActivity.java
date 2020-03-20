@@ -52,6 +52,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 10f;
+    private boolean ALL_PERMISSIONS_OK =false ;
     LocationManager locationManager;
 
     private GoogleMap mMap;
@@ -62,8 +63,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Boolean mLocationPermissionGranted= false;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-
-    private boolean updatesOn = false;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location  mLastKnownLocation;
@@ -104,28 +103,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-
-
-
-
-
-
-/*        locationCallback = new LocationCallback()
+       locationCallback = new LocationCallback()
         {
             @Override
             public void onLocationResult(LocationResult locationResult)
             {
+
                 super.onLocationResult(locationResult);
                 for (Location location : locationResult.getLocations())
                 {
-                    //Update UI with location data
-                    if (location != null) {
-                        Toast.makeText(MapsActivity.this, location.getLongitude() + " " + location.getLatitude(), Toast.LENGTH_SHORT).show();
 
-                    }
+                        if (location != null ) {
+                            Toast.makeText(MapsActivity.this, location.getLongitude() + " " + location.getLatitude(), Toast.LENGTH_SHORT).show();
+                            moveCamera(new LatLng(location.getLongitude(),location.getLatitude()),DEFAULT_ZOOM);
+                        }
+
                 }
             }
-        };*/
+        };
 
     }
 
@@ -146,15 +141,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney, Australia, and move the camera.
-/*        LatLng fes = new LatLng(34.023943, -5.0717805);
-        mMap.addMarker(new MarkerOptions().position(fes).title("Fes"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(fes));*/
-        // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-        // Do other setup activities here too, as described elsewhere in this tutorial.
 
-        // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
 
@@ -227,9 +215,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
+
                             if(mLastKnownLocation!=null)
                             {
                                 moveCamera(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()),DEFAULT_ZOOM);
+                                startLocationUpdates();
                             }
                             else
                             {
@@ -321,41 +311,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-/*
+
     @Override
     protected void onResume() {
         super.onResume();
-      startLocationUpdates();
+        startLocationUpdates();
     }
-*/
-/*
+
+
     private void startLocationUpdates() {
 
         try {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-
+            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
         }
         catch (NullPointerException e)
         {
             e.printStackTrace();
         }
+    }
 
-
-    }*/
-
-    /*
 
     @Override
     protected void onPause() {
         super.onPause();
-        stopLocationUpdates();
+     stopLocationUpdates();
     }
 
     private void stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
-*/
+
 
     //pour afficher le menu
     @Override
