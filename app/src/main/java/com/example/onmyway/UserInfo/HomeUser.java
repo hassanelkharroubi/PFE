@@ -1,8 +1,10 @@
-package com.example.onmyway;
+package com.example.onmyway.UserInfo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.onmyway.R;
 
 public class HomeUser extends AppCompatActivity {
 

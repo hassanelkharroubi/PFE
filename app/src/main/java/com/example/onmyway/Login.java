@@ -2,17 +2,13 @@ package com.example.onmyway;
 
 
 
-import android.content.Context;
 import android.content.Intent;
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.text.TextUtils;
 
-import android.util.Log;
 import android.util.Patterns;
 
 import android.view.View;
@@ -26,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.onmyway.UserInfo.HomeUser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -142,7 +139,7 @@ public class Login extends AppCompatActivity {
                             }
                             else
                             {
-                                Intent intent=new Intent(Login.this,HomeUser.class);
+                                Intent intent=new Intent(Login.this, HomeUser.class);
                                 intent.putExtra("type","user");
                                 intent.putExtra("email",email);
                                 startActivity(intent);
