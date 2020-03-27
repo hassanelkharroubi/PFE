@@ -1,4 +1,4 @@
-package com.example.onmyway;
+package com.example.onmyway.administrateur;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -24,9 +24,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.onmyway.ListAllUser;
+import com.example.onmyway.R;
 import com.example.onmyway.UserInfo.GeoPoint;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.UserInfo.UserLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;

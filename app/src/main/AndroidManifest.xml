@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.onmyway">
@@ -12,9 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
-
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,11 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <activity android:name=".ListAllUser"/>
-
-        <activity android:name=".SupprimerUser" />
-
+        <activity android:name=".Chercher"></activity>
+        <activity android:name=".ListAllUser" />
+        <activity android:name=".administrateur.SupprimerUser" />
         <activity android:name=".UserInfo.HomeUser" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -42,10 +35,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".administrateur.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".Home" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".administrateur.Home" />
+        <activity android:name=".administrateur.RegisterActivity" />
         <activity android:name=".Login" />
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -5,23 +5,93 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Home">
+    tools:context=".administrateur.Home">
     <include
         layout="@layout/toolbar_layout"/>
 
-    <TextView
-        android:id="@+id/textView1"
+    <ImageView
+        android:id="@+id/logo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal"
-        android:textSize="20sp" />
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/transportation_logo" />
 
-    <Button
-        android:id="@+id/gps"
+    <LinearLayout
+        android:id="@+id/btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="enableGPS"
-        android:text="start GPS" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/aclonica"
+            android:paddingLeft="30dp"
+            android:text="Bienvenue Mr."
+            android:textColor="#fff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/wlcm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/aclonica"
+            android:paddingLeft="30dp"
+            android:text="Bienvenue Mr. Khalid"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/afaire"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/aclonica"
+            android:paddingLeft="20dp"
+            android:text="Veuillez choisir ce que vous voulez faire"
+            android:textColor="#fff"
+            android:textSize="18dp" />
+
+        <Button
+            android:id="@+id/ajouterBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/edit"
+            android:onClick="ajouter"
+            android:text="Ajouter" />
+
+        <Button
+            android:id="@+id/supprimerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/edit"
+            android:onClick="supprimer"
+            android:text="Supprimer" />
+
+        <Button
+            android:id="@+id/chercherBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit"
+            android:onClick="chercher"
+            android:text="Chercher" />
+    </LinearLayout>
+
+
 
 </LinearLayout>

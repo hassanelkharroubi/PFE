@@ -1,4 +1,4 @@
-package com.example.onmyway;
+package com.example.onmyway.administrateur;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,12 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.onmyway.ListAllUser;
+import com.example.onmyway.R;
 import com.example.onmyway.connection.Connectivity;
 
 
@@ -39,7 +40,7 @@ public class Home extends AppCompatActivity {
         connectivity=new Connectivity();
 
 
-        textView1=findViewById(R.id.textView1);
+        textView1=findViewById(R.id.wlcm);
 
         //get toolbar_layout
         toolbar=findViewById(R.id.toolbar);
@@ -47,7 +48,7 @@ public class Home extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        textView1.setText("Welcome MR . "+Administrateur.email);
+        textView1.setText(Administrateur.fullame);
 
 
 
@@ -61,7 +62,6 @@ public class Home extends AppCompatActivity {
 
 
 
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -69,7 +69,7 @@ public class Home extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if(item.getItemId()==R.id.ajouter)
-            startActivity(new Intent(this,RegisterActivity.class));
+            startActivity(new Intent(this, RegisterActivity.class));
 
         if(item.getItemId()==android.R.id.home)
         {
@@ -80,12 +80,12 @@ public class Home extends AppCompatActivity {
         }
 
         if(item.getItemId()==R.id.suprimer)
-            startActivity(new Intent(this,SupprimerUser.class));
+            startActivity(new Intent(this, SupprimerUser.class));
 
         if(item.getItemId()==R.id.chercher)
-            startActivity(new Intent(this,MapsActivity.class));
+            startActivity(new Intent(this, MapsActivity.class));
         if(item.getItemId()==R.id.enligne)
-            startActivity(new Intent(Home.this,ListAllUser.class));
+            startActivity(new Intent(Home.this, ListAllUser.class));
 
 
         return super.onOptionsItemSelected(item);
@@ -144,5 +144,17 @@ public class Home extends AppCompatActivity {
         super.onStop();
 
         unregisterReceiver(connectivity);
+    }
+
+    public void ajouter(View view) {
+        startActivity(new Intent(this,RegisterActivity.class));
+    }
+
+    public void supprimer(View view) {
+        startActivity(new Intent(this,SupprimerUser.class));
+
+    }
+    public void chercher(View view) {
+
     }
 }

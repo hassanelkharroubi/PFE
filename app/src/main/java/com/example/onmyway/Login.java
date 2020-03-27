@@ -23,6 +23,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.onmyway.UserInfo.HomeUser;
+import com.example.onmyway.administrateur.Administrateur;
+import com.example.onmyway.administrateur.Home;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -67,7 +69,7 @@ public class Login extends AppCompatActivity {
         }
 
         if (user != null) {
-            Intent intent=new Intent(Login.this,Home.class);
+            Intent intent=new Intent(Login.this, Home.class);
             intent.putExtra("type","administrateur");
             startActivity(intent);
 

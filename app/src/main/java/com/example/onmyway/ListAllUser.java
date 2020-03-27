@@ -7,20 +7,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.onmyway.UserInfo.User;
-import com.google.firebase.FirebaseError;
+import com.example.onmyway.administrateur.MapsActivity;
+import com.example.onmyway.administrateur.RegisterActivity;
+import com.example.onmyway.administrateur.SupprimerUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,8 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
-
-import dmax.dialog.SpotsDialog;
 
 public class ListAllUser extends AppCompatActivity {
 
@@ -151,7 +146,7 @@ public class ListAllUser extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if(item.getItemId()==R.id.ajouter)
-            startActivity(new Intent(this,RegisterActivity.class));
+            startActivity(new Intent(this, RegisterActivity.class));
 
         if(item.getItemId()==android.R.id.home)
         {
@@ -160,10 +155,10 @@ public class ListAllUser extends AppCompatActivity {
         }
 
         if(item.getItemId()==R.id.suprimer)
-            startActivity(new Intent(this,SupprimerUser.class));
+            startActivity(new Intent(this, SupprimerUser.class));
 
         if(item.getItemId()==R.id.chercher)
-            startActivity(new Intent(this,MapsActivity.class));
+            startActivity(new Intent(this, MapsActivity.class));
 
 
 
