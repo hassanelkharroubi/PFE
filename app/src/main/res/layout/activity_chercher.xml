@@ -1,9 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Chercher">
+    android:orientation="vertical"
+    tools:context=".administrateur.Chercher">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include layout="@layout/toolbar_layout"/>
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/edit"
+        android:ems="10"
+        android:hint="Chercher par le CIN"
+        android:inputType="textPersonName"
+        android:paddingLeft="10dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="10dp" />
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button"
+        android:elevation="60dp"
+        android:fontFamily="sans-serif"
+        android:onClick="chercherUser"
+        android:text="Chercher"
+
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/userInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/fullname"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/input"
+            android:padding="10dp"
+            android:text="@string/fullname"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/cin"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/input"
+            android:padding="10dp"
+            android:text="@string/cin"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/input"
+            android:padding="10dp"
+            android:text="Email"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/operation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:elevation="60dp"
+                android:fontFamily="sans-serif"
+                android:onClick="supprimerUser"
+                android:padding="10dp"
+                android:text="Supprimer"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:elevation="60dp"
+                android:fontFamily="sans-serif"
+                android:onClick="afficherSurMap"
+                android:padding="10dp"
+                android:text="Afficher sur le Map"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

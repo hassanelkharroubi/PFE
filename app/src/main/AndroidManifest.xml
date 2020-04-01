@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Chercher"></activity>
+        <activity android:name=".administrateur.Chercher"></activity>
         <activity android:name=".ListAllUser" />
         <activity android:name=".administrateur.SupprimerUser" />
         <activity android:name=".UserInfo.HomeUser" />

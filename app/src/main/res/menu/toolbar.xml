@@ -20,7 +20,7 @@
 
     <item
         android:id="@+id/enligne"
-        android:title="en ligne"
+        android:title="Chauffeurs"
         app:showAsAction="collapseActionView"/>
 
 </menu>

@@ -7,7 +7,8 @@ public class User {
     private String fullName;
     private String email;
     private String password;
-    private String id;
+    //user id==cin
+    private String cin;
     public User()
     {
         //this Constructor is for DataSnapShot for firebase
@@ -18,7 +19,7 @@ public class User {
         this.fullName = fullname;
         this.email = email;
         this.password = password;
-        this.id = id;
+        this.cin = id;
     }
 
     public String getfullName() {
@@ -48,11 +49,11 @@ public class User {
     }
 
     public String getId() {
-        return id;
+        return cin;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.cin = id;
     }
 
 }

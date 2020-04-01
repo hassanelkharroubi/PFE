@@ -4,41 +4,65 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fadingEdgeLength="10dp"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="2dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/edit"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/button"
         android:clickable="true"
-        android:divider="@drawable/divider"
-        android:elevation="5dp"
-        android:orientation="vertical"
-        android:paddingLeft="20dp">
+        android:fitsSystemWindows="true"
+        android:focusable="true"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="hassan el kharroubi"
-            android:padding="4dp"
-            android:paddingLeft="10dp"
-            android:textColor="@color/Black"
-            android:textSize="20sp" />
+        <ImageView
+            android:id="@+id/driver"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingBottom="5dp"
+            app:srcCompat="@drawable/driver" />
 
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="email"
-            android:paddingLeft="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/Grey"
-            android:textSize="14sp" />
+        <LinearLayout
+            android:id="@+id/user_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
 
+            android:layout_weight="2"
+            android:clickable="true"
+            android:divider="@drawable/divider"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            android:paddingLeft="15dp">
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="hassan el kharroubi"
+                android:padding="4dp"
+                android:paddingLeft="10dp"
+                android:textColor="@color/Black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="email"
+                android:paddingLeft="10dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/Black"
+                android:textSize="18sp" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

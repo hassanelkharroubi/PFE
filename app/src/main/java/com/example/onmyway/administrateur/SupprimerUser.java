@@ -25,5 +25,6 @@ public class SupprimerUser extends AppCompatActivity {
     }
 
 
-
+    public void supprimer(View view) {
+    }
 }

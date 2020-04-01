@@ -10,10 +10,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.UserInfo.User;
 import com.example.onmyway.administrateur.MapsActivity;
 import com.example.onmyway.administrateur.RegisterActivity;
@@ -29,8 +34,6 @@ import java.util.ArrayList;
 
 public class ListAllUser extends AppCompatActivity {
 
-
-
     private ProgressDialog progressDialog;
 
     private RecyclerView recyclerView;
@@ -40,10 +43,11 @@ public class ListAllUser extends AppCompatActivity {
     private Toolbar toolbar;
 
     private DatabaseReference ref;
+    private final String TAG="allUsers";
 
-
-
-    private ArrayList<User> users;
+    //for sqlite database
+    private UserDB userDB;
+    private ArrayList<User> usersFireBase,users;
     private  User user;
     AlertDialog alertDialog;
 
@@ -52,7 +56,6 @@ public class ListAllUser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_all_user);
 
-        attendre();
         //get toolbar_layout
         toolbar=findViewById(R.id.toolbar);
 
@@ -60,57 +63,75 @@ public class ListAllUser extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        recyclerView=findViewById(R.id.recycler);
+
+        //store user catched from firebase
+        user=new User();
+        //add all user from firebase to usersFireBase
+        usersFireBase=new ArrayList<>();
+        //for local data base(UserDB)
+        users=new ArrayList<>();
+
         ref=FirebaseDatabase.getInstance().getReference().child("Users");
+        userDB=new UserDB(this);
 
         readFromDataBase();
-
 
     }
 
 
     public void readFromDataBase()
     {
+        users=userDB.getAllUsers();
+        if(users.size()==0)
+        {
+            //show progress dialog
+            attendre();
 
-        ref.addValueEventListener(new ValueEventListener(){
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            ref.addValueEventListener(new ValueEventListener(){
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                recyclerView=findViewById(R.id.recycler);
+                    for (DataSnapshot userSnapshot: dataSnapshot.getChildren())
+                    {
+                        user = userSnapshot.getValue(User.class);
+                        usersFireBase.add(user);
+                        //add to data base
+                    }
 
-                user=new User();
-
-                users=new ArrayList<>();
-
-
-
-                for (DataSnapshot userSnapshot: dataSnapshot.getChildren())
-                {
-                    user = userSnapshot.getValue(User.class);
-                    users.add(user);
-
+                    userDB.addUsers(usersFireBase);
+                    setAdapter(usersFireBase);
+                    progressDialog.dismiss();
 
                 }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    Toast.makeText(ListAllUser.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+
+            });
+        }
+        else
+        {
+            Log.i(TAG,"inside adpater and users.size()!=0 ");
+            setAdapter(users);
+
+        }
 
 
 
-                adapter=new UserRecyclerAdapter(users);
+    }
 
-                recyclerView.setAdapter(adapter);
+    private void setAdapter(ArrayList<User> list)
+    {
+        adapter=new UserRecyclerAdapter(list, ListAllUser.this);
 
-                recyclerView.setLayoutManager(new LinearLayoutManager(ListAllUser.this));
+        recyclerView.setAdapter(adapter);
 
-                progressDialog.dismiss();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-        });
-
+        recyclerView.setLayoutManager(new LinearLayoutManager(ListAllUser.this));
 
     }
     public void attendre()
@@ -118,8 +139,9 @@ public class ListAllUser extends AppCompatActivity {
         progressDialog=new ProgressDialog(this);
 
 
-        progressDialog.setTitle("chargement");
-        progressDialog.setMessage("veuillez attendre..");
+        progressDialog.setTitle("Chargement");
+        progressDialog.setMessage("veuillez attendre ....");
+
         progressDialog.show();
 
 
@@ -165,4 +187,15 @@ public class ListAllUser extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+        Log.i(TAG,"inside OnResume");
+        users=new ArrayList<>();
+
+        readFromDataBase();
+
+        Toast.makeText(this, "hello : "+users.size(), Toast.LENGTH_SHORT).show();
+    }
 }

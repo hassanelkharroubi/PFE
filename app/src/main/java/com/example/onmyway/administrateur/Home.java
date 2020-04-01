@@ -151,10 +151,12 @@ public class Home extends AppCompatActivity {
     }
 
     public void supprimer(View view) {
-        startActivity(new Intent(this,SupprimerUser.class));
+        startActivity(new Intent(this,Chercher.class));
 
     }
     public void chercher(View view) {
+
+        startActivity(new Intent(this,Chercher.class));
 
     }
 }
