@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,9 +21,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.onmyway.DB.LocationDB;
 import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
+import com.example.onmyway.UserInfo.GeoPoint;
+import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.UserInfo.UserLocation;
 import com.example.onmyway.connection.Connectivity;
+
+import java.util.ArrayList;
 
 
 public class Home extends AppCompatActivity {
@@ -29,6 +37,8 @@ public class Home extends AppCompatActivity {
     private static final String TAG = "Home";
     private TextView textView1;
     private Toolbar toolbar;
+
+    private LocationDB locationDB;
 
     private Connectivity connectivity;
 
@@ -38,7 +48,6 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         connectivity=new Connectivity();
-
 
         textView1=findViewById(R.id.wlcm);
 
@@ -139,6 +148,8 @@ public class Home extends AppCompatActivity {
 
     }
 
+
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -159,4 +170,7 @@ public class Home extends AppCompatActivity {
         startActivity(new Intent(this,Chercher.class));
 
     }
+
+
+
 }

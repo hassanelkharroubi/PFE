@@ -2,6 +2,11 @@ package com.example.onmyway.UserInfo;
 
 public class GeoPoint {
 
+    public GeoPoint(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public double getLatitude() {
         return latitude;
     }
@@ -30,5 +35,6 @@ public class GeoPoint {
     private double longitude;
     private double time;
     public GeoPoint(){}
+
 
 }

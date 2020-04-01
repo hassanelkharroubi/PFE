@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.R;
 import com.example.onmyway.UserInfo.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,10 +35,7 @@ import dmax.dialog.SpotsDialog;
 public class RegisterActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private FirebaseAuth mAuth;
 
-    private FirebaseDatabase database;
-    private DatabaseReference myRef;
 
     private static final String TAG="register";
     private String cin;
@@ -56,6 +54,11 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextConfirmPassword;
 
     private User user;
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    //for sqlite data base
+    private UserDB userDB;
 
 
 
@@ -68,6 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
+        userDB=new UserDB(this);
 
 
 
@@ -111,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
         {
             new SpotsDialog.Builder()
                     .setContext(this)
-                    .setTheme(R.style.CustomPD).setMessage("veuillez attendre ..")
+                    .setTheme(R.style.CustomPD).setMessage("Veuillez attendre ....")
                     .build()
                     .show();
 
@@ -122,6 +126,9 @@ public class RegisterActivity extends AppCompatActivity {
                             if (task.isSuccessful())
                             {
                                 myRef.child(user.getId()).setValue(user);
+                                //i the same time we have to add this user to local data base
+                                userDB.addUser(user);
+
                                 msg("Authentication success.");
 
                                 startActivity(new Intent(RegisterActivity.this,RegisterActivity.class));
@@ -138,7 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else
         {
-            msg("veuilew verifier les donnees que vouz avez saisi ..");
+            msg("Veuilez verifier les donnees que vouz avez saisi ....!");
         }
 
 
