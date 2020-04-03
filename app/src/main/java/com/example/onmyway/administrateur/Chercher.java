@@ -1,8 +1,10 @@
 package com.example.onmyway.administrateur;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,16 +13,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.onmyway.DB.Firebase;
 import com.example.onmyway.DB.UserDB;
+import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
+import com.example.onmyway.UserInfo.GeoPoint;
 import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.connection.Internet;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 
 public class Chercher extends AppCompatActivity {
@@ -36,9 +46,15 @@ public class Chercher extends AppCompatActivity {
     private LinearLayout operationV;
     private DatabaseReference ref;
 
+    private DatabaseReference refChild;
+    private DatabaseReference locationRef;
+
+
     ArrayList<User> users;
     private User user;
     UserDB userDB;
+//on a besoin de ca  lorsqu'on va faire des requete au firebase
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +63,41 @@ public class Chercher extends AppCompatActivity {
 
 
 
+//on va utiliser cet objet pour les requetes comme sql
+        refChild= FirebaseDatabase.getInstance().getReference().child(getString(R.string.UserData));
+        locationRef= FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.OnlineUserLocation));
+
+      //  DatabaseReference node=locationRef.child("H0HHxujI3hbxNo0b1uOfxNC8MQs2\n");
+
+        locationRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists())
+                {
+                    for (DataSnapshot snapshot:dataSnapshot.getChildren())
+                    {
+                        Intent intent=new Intent(Chercher.this,UserPosition.class);
+
+                        GeoPoint point=snapshot.getValue(GeoPoint.class);
+                        Toast.makeText(Chercher.this, "ooooooh", Toast.LENGTH_SHORT).show();
+
+                        intent.putExtra("lat",point.getLatitude());
+                        intent.putExtra("long",point.getLongitude());
+                        intent.putExtra("key",snapshot.getKey());
+                        startActivity(intent);
 
 
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         chercherV=findViewById(R.id.search);
         fullnameV=findViewById(R.id.fullname);
@@ -64,7 +113,8 @@ public class Chercher extends AppCompatActivity {
         if(users.size()==0)
         {
 
-            ref= FirebaseDatabase.getInstance().getReference().child("Users");
+            ref= FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.UserData));
+
 
             ref.addValueEventListener(new ValueEventListener(){
                 @Override
@@ -189,31 +239,76 @@ public class Chercher extends AppCompatActivity {
     }
 
     public void afficherSurMap(View view) {
-    }
 
-/*    private User findUser(String id)
-    {
-        User user1=new User();
-        if(users.size()>0)
-        {
-            Toast.makeText(this, "je suis la", Toast.LENGTH_SHORT).show();
-            for (int i=0;i<users.size();i++)
-            {
-                user1=users.get(i);
-                if(user1.getId().toLowerCase().equals(id))
-                {
 
-                    return user1;
+        Toast.makeText(this, keyWord, Toast.LENGTH_SHORT).show();
+        attendre();
+        Query query=refChild.orderByChild("id").equalTo(keyWord);
+
+        try {
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user2  = snapshot.getValue(User.class);
+
+
+                            Toast.makeText(Chercher.this,  snapshot.getKey()+" value = "+snapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Chercher.this, user2.getEmail(), Toast.LENGTH_SHORT).show();
+                        }
+
+
+
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(Chercher.this, keyWord+" n'existe pas", Toast.LENGTH_SHORT).show();
+
+                    }
+
+
                 }
 
-            }
-            return null;
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    progressDialog.dismiss();
+                    Toast.makeText(Chercher.this, "erreur", Toast.LENGTH_SHORT).show();
 
 
+                }
+            });
+
+        }catch (NullPointerException e)
+        {
+            Toast.makeText(this, "Veuillez verifier votre connection", Toast.LENGTH_SHORT).show();
         }
-        return null;
 
-    }*/
+
+
+
+
+    }
+    public void attendre()
+    {
+        progressDialog=new ProgressDialog(this);
+
+
+        progressDialog.setTitle("Chargement");
+        progressDialog.setMessage("veuillez attendre ....");
+
+        progressDialog.show();
+
+
+    }
+
+
+
+
 
 
     @Override

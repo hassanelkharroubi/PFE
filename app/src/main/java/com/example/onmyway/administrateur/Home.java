@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,18 +17,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.onmyway.DB.LocationDB;
 import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
-import com.example.onmyway.UserInfo.GeoPoint;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.UserInfo.UserLocation;
-import com.example.onmyway.connection.Connectivity;
-
-import java.util.ArrayList;
+import com.example.onmyway.connection.Internet;
 
 
 public class Home extends AppCompatActivity {
@@ -40,14 +35,14 @@ public class Home extends AppCompatActivity {
 
     private LocationDB locationDB;
 
-    private Connectivity connectivity;
-
+    private Internet internet;
+   // @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        connectivity=new Connectivity();
+        internet=new Internet(this);
 
         textView1=findViewById(R.id.wlcm);
 
@@ -56,10 +51,7 @@ public class Home extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         textView1.setText(Administrateur.fullame);
-
-
 
     }
 
@@ -143,8 +135,8 @@ public class Home extends AppCompatActivity {
 
         IntentFilter intentFilter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction(LocationManager.PROVIDERS_CHANGED_ACTION);
-
-        registerReceiver(connectivity,intentFilter);
+//for brodacastReceveir
+      //  registerReceiver(connectivity,intentFilter);
 
     }
 
@@ -153,8 +145,8 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        unregisterReceiver(connectivity);
+//for brodacastReceveir
+       // unregisterReceiver(connectivity);
     }
 
     public void ajouter(View view) {

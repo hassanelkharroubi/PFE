@@ -9,4 +9,10 @@
     <string name="fullname">Le nom complet</string>
     <string name="cin">CIN</string>
 
+    <!--for firebase data obkect-->
+    <string name="UserData">UserData</string>
+    <string name="OnlineUserLocation">OnlineUserLocation</string>
+    <string name="OfflineUserLocation">OfflineUserLocation</string>
+    <string name="title_activity_user_position">Map</string>
+
 </resources>

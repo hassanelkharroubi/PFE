@@ -24,9 +24,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.onmyway.DB.LocationDB;
 import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
 import com.example.onmyway.UserInfo.GeoPoint;
+import com.example.onmyway.UserInfo.SaveOfflineLocation;
+import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.UserInfo.UserLocation;
+import com.example.onmyway.connection.Internet;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -48,6 +53,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -79,19 +87,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //check if gps provider ad network provider are enabeld
     private boolean gps_enabled = false;
 
-    //private boolean network_enabled = false;
+    //check internet connection we use class Internet
+    private Internet internet;
+    private Boolean connected = false;
 
     private GeoPoint geoPoint;
+    private UserLocation userLocation;
+    private LocationDB locationDB;
+    //check if user is not moving
+    //reduce the min time access to firebase
+    private GeoPoint prevGepoint;
+
     //***********for dataBase fire base and dataBase authentification***************
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-private  Timestamp timestamp;
+
 //****************************************************here start methods*********************************************************
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate(final Bundle savedInstanceState)
     {
 
         super.onCreate(savedInstanceState);
@@ -108,8 +124,16 @@ private  Timestamp timestamp;
         locationRequest();
         //pour sauvgarder des point de  location
         geoPoint=new GeoPoint();
+        prevGepoint=new GeoPoint();
+        userLocation=new UserLocation();
 
 
+        //check conection
+        internet=new Internet(this);
+
+        connected=internet.conected();
+        //intantiate db for LocationDB
+        locationDB=new LocationDB(this);
 
         mDatabase= FirebaseDatabase.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
@@ -137,29 +161,91 @@ private  Timestamp timestamp;
             {
 
                 super.onLocationResult(locationResult);
+                //test if we have internet
+                connected=internet.conected();
                 for (Location location : locationResult.getLocations())
                 {
 
+
                         if (location != null ) {
-                            Toast.makeText(MapsActivity.this, location.getLongitude() + " " + location.getLatitude(), Toast.LENGTH_SHORT).show();
+                            msg(location.getLongitude() + " " + location.getLatitude());
                             moveCamera(new LatLng(location.getLongitude(),location.getLatitude()),DEFAULT_ZOOM);
+
+
                             geoPoint.setLatitude(location.getLatitude());
                             geoPoint.setLongitude(location.getLongitude());
-                            geoPoint.setTime(System.currentTimeMillis()/1000);
 
-                            mDatabase.child("Users").child(currentUser.getUid()).setValue(geoPoint)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            msg("geoPoint was saved with succus !" );
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            msg("we ca't save ur geoPoint !");
-                                        }
-                                    });
+
+
+                            if(!connected)
+                            {
+                                msg("Vous etes n'est pas connecte au internet");
+
+                                if( !geoPoint.equals(prevGepoint))
+                                {
+                                    locationDB.addUserLocation(new UserLocation(geoPoint,new User("hassan","hassan@gmail.com","hassan123","zt265568")));
+                                    prevGepoint=geoPoint;
+                                    connected=internet.conected();
+                                }
+
+                            }
+                            else
+                            {
+                                ArrayList<GeoPoint> geoPointsList= locationDB.getUserGeoPoints();
+
+                                if(geoPointsList.size()>0)
+                                {
+
+                                    SaveOfflineLocation saveOfflineLocation=new SaveOfflineLocation(geoPointsList,mDatabase,internet,locationDB,connected);
+                                    saveOfflineLocation.start();
+
+
+/*
+                                    mDatabase.child("OfflineUserLocation").child(locationDB.getUserCIN()).child(String.valueOf(date.getTime())).setValue(geoPointsList)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    msg("geoPoint was saved with succus !" );
+                                                    //sucess so we have to delete all locations from local data base
+                                                    locationDB.deleteLocations();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    msg("we ca't save ur geoPoint !"+e.getMessage());
+                                                    connected=internet.conected();
+                                                }
+                                            });
+*/
+
+                                }
+
+                            }
+
+
+                            new Thread()
+                            {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    mDatabase.child("OnlineUserLocation").child(currentUser.getUid()).setValue(geoPoint)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    msg("geoPoint was saved with succus !" );
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    msg("we ca't save ur geoPoint !"+e.getMessage());
+                                                }
+                                            });
+                                }
+                            }.start();
+
+
                         }
 
                 }
@@ -347,8 +433,8 @@ private  Timestamp timestamp;
     private void locationRequest()
     {
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(60000); //use a value fo about 10 to 15s for a real app
-        locationRequest.setFastestInterval(60000);
+        locationRequest.setInterval(15000); //use a value fo about 10 to 15s for a real app
+        locationRequest.setFastestInterval(10000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -359,6 +445,8 @@ private  Timestamp timestamp;
     @Override
     protected void onResume() {
         super.onResume();
+        //call for check internet
+        connected=internet.conected();
         startLocationUpdates();
     }
 

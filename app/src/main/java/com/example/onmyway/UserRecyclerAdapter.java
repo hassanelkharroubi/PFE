@@ -50,6 +50,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
         ((ViewHolder)holder).username.setText(mUsers.get(position).getfullName());
         ((ViewHolder)holder).email.setText(mUsers.get(position).getEmail());
+
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

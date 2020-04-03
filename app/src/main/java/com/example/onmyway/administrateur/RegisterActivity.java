@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.R;
 import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.connection.Internet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -59,6 +60,11 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     //for sqlite data base
     private UserDB userDB;
+    //check internet
+    Internet internet;
+    //boolean for check if there network or not
+    //intialize it in onResume() method
+    private Boolean connected;
 
 
 
@@ -70,8 +76,12 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users");
+        myRef = database.getReference("UserData");
         userDB=new UserDB(this);
+        internet=new Internet(this);
+        //start new Thread to check network state and internet acess
+        internet.start();
+
 
 
 
@@ -109,6 +119,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void register(View view) {
 
+        internet.start();
+        connected=internet.conected();
+        if(!connected)
+        {
+            msg("Veuillez verifier votre internet ...");
+            return;
+        }
+
 
 
         if(allInputValid())
@@ -125,11 +143,15 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful())
                             {
-                                myRef.child(user.getId()).setValue(user);
+                                myRef.child( mAuth.getUid()).setValue(user);
+
                                 //i the same time we have to add this user to local data base
                                 userDB.addUser(user);
 
                                 msg("Authentication success.");
+
+                                mAuth.signOut();
+                                mAuth.signInWithEmailAndPassword(Administrateur.email,Administrateur.password);
 
                                 startActivity(new Intent(RegisterActivity.this,RegisterActivity.class));
                             }
@@ -178,7 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
-    public void msg(String msg)
+    public void  msg(String msg)
     {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
@@ -206,4 +228,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        connected=internet.conected();
+
+
+
+    }
 }
