@@ -80,9 +80,6 @@ public class Home extends AppCompatActivity {
             startActivity(homeIntent);
         }
 
-        if(item.getItemId()==R.id.suprimer)
-            startActivity(new Intent(this, SupprimerUser.class));
-
         if(item.getItemId()==R.id.chercher)
             startActivity(new Intent(this, MapsActivity.class));
         if(item.getItemId()==R.id.enligne)

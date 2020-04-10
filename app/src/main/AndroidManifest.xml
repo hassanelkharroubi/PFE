@@ -37,7 +37,6 @@
             android:label="@string/title_activity_user_position"></activity>
         <activity android:name=".administrateur.Chercher" />
         <activity android:name=".ListAllUser" />
-        <activity android:name=".administrateur.SupprimerUser" />
         <activity android:name=".UserInfo.HomeUser" />
         <activity
             android:name=".administrateur.MapsActivity"

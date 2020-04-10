@@ -2,13 +2,16 @@ package com.example.onmyway;
 
 
 
+import android.app.Dialog;
 import android.content.Intent;
 
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Message;
 import android.text.TextUtils;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import android.view.View;
@@ -22,16 +25,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.onmyway.DB.Firebase;
 import com.example.onmyway.UserInfo.HomeUser;
 import com.example.onmyway.administrateur.Administrateur;
 import com.example.onmyway.administrateur.Home;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import dmax.dialog.SpotsDialog;
 
@@ -44,6 +55,7 @@ public class Login extends AppCompatActivity {
     SpotsDialog pd;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference ref;
     private static final String TAG="login";
 
     private String email;
@@ -62,8 +74,10 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(!checkPlayServices())
+        ref= FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.UserData));
+        if(checkGooglePlayServices())
         {
+
             finish();
 
         }
@@ -100,6 +114,40 @@ public class Login extends AppCompatActivity {
 
     }
 
+    private boolean checkGooglePlayServices() {
+
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        final int status = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e(TAG, apiAvailability.getErrorString(status));
+
+            // ask user to update google play services.
+            Dialog dialog = apiAvailability.getErrorDialog(this,100,1);
+            if(dialog!=null)
+            {
+
+                dialog.setTitle("Please update your google play services");
+                dialog.setCancelable(true);
+                dialog.show();
+            }
+
+            return false;
+        } else {
+            Log.i(TAG, apiAvailability.getErrorString(status)+"hello");
+            // google play services is updated.
+            //your code goes here...
+            return true;
+        }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        if(requestCode==1)
+        {
+            Log.i(TAG,"thus is your request code "+1);
+        }
+    }
 
     public void login(View view) {
 
@@ -134,25 +182,42 @@ public class Login extends AppCompatActivity {
                             if(email.equals(Administrateur.email))
                             {
                                 Intent intent=new Intent(Login.this,Home.class);
-                                intent.putExtra("type","administrateur");
                                 startActivity(intent);
                                 finish();
 
                             }
                             else
                             {
-                                Intent intent=new Intent(Login.this, HomeUser.class);
-                                intent.putExtra("type","user");
-                                intent.putExtra("email",email);
-                                startActivity(intent);
-                                finish();
+
+                                Query query= ref.orderByKey().equalTo(mAuth.getUid());
+                                query.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.hasChildren())
+                                        {
+
+                                            Intent intent=new Intent(Login.this, HomeUser.class);
+                                            intent.putExtra("type","user");
+                                            intent.putExtra("email",email);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(Login.this, "cet utilisateur n'existe pas", Toast.LENGTH_SHORT).show();
+                                            mAuth.signOut();
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
 
                             }
 
-
-
-                          //  FirebaseUser user = mAuth.getCurrentUser();
-                          //  updateUI(user);
                         }
                         else
                             {
@@ -165,10 +230,6 @@ public class Login extends AppCompatActivity {
 
 
     }
-
-
-
-
 
     //fonction de verification email
     public static boolean isEmail(CharSequence target) {

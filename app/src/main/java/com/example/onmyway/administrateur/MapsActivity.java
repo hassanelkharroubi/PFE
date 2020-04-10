@@ -498,7 +498,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         if (item.getItemId() == R.id.suprimer)
-            startActivity(new Intent(this, SupprimerUser.class));
+            startActivity(new Intent(this, Chercher.class));
 
         if (item.getItemId() == R.id.chercher)
             startActivity(new Intent(this, MapsActivity.class));

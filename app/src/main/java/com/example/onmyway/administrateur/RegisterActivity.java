@@ -1,5 +1,7 @@
 package com.example.onmyway.administrateur;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.os.Build;
@@ -58,6 +60,8 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
+
+    ProgressDialog progressDialog;
     //for sqlite data base
     private UserDB userDB;
     //check internet
@@ -76,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("UserData");
+        myRef = database.getReference(getResources().getString(R.string.UserData));
         userDB=new UserDB(this);
         internet=new Internet(this);
         //start new Thread to check network state and internet acess
@@ -100,7 +104,6 @@ public class RegisterActivity extends AppCompatActivity {
         editTextEmail=findViewById(R.id.email);
         editTextPassword=findViewById(R.id.password);
         editTextConfirmPassword=findViewById(R.id.confirmpassword);
-
         editTextFullName=findViewById(R.id.fullname);
         editTextCin=findViewById(R.id.cin);
 
@@ -131,11 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         if(allInputValid())
         {
-            new SpotsDialog.Builder()
-                    .setContext(this)
-                    .setTheme(R.style.CustomPD).setMessage("Veuillez attendre ....")
-                    .build()
-                    .show();
+          attendre();
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
             {
@@ -181,6 +180,18 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(new Intent(this, Home.class));
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void attendre()
+    {
+        progressDialog=new ProgressDialog(this);
+
+
+        progressDialog.setTitle("Chargement");
+        progressDialog.setMessage("veuillez attendre ....");
+
+        progressDialog.show();
+
     }
 
 

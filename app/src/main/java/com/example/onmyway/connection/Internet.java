@@ -23,7 +23,7 @@ public class Internet extends Thread{
     @Override
     public void run() {
         super.run();
-        connected=isNetworkAvailable(context);
+        connected=hasInternetAccess(context);
     }
 
     private boolean isNetworkAvailable(Context context) {

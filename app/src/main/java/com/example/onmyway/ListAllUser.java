@@ -11,18 +11,23 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
+
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ListView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.administrateur.Chercher;
+import com.example.onmyway.administrateur.Home;
 import com.example.onmyway.administrateur.MapsActivity;
 import com.example.onmyway.administrateur.RegisterActivity;
-import com.example.onmyway.administrateur.SupprimerUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +64,7 @@ public class ListAllUser extends AppCompatActivity {
         //get toolbar_layout
         toolbar=findViewById(R.id.toolbar);
 
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -72,12 +78,25 @@ public class ListAllUser extends AppCompatActivity {
         //for local data base(UserDB)
         users=new ArrayList<>();
 
-        ref=FirebaseDatabase.getInstance().getReference().child("Users");
+        ref=FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.UserData));
         userDB=new UserDB(this);
 
         readFromDataBase();
 
+
     }
+    public void toast(String msg) {
+        LayoutInflater layoutInflater= getLayoutInflater();
+        View toastLayout=layoutInflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.showtoast));
+        TextView textView= toastLayout.findViewById(R.id.toastMsg);
+        textView.setText(msg+" ");
+        Toast toast=new Toast(this);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(toastLayout);
+        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 
 
     public void readFromDataBase()
@@ -86,40 +105,44 @@ public class ListAllUser extends AppCompatActivity {
         if(users.size()==0)
         {
             //show progress dialog
-            attendre();
 
             ref.addValueEventListener(new ValueEventListener(){
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    attendre();
+
+                    if(!dataSnapshot.hasChildren())
+                    {
+                       progressDialog.dismiss();
+                       toast("pas de cheffaures! veuillez ajouter neveau");
+                       startActivity(new Intent(ListAllUser.this, Home.class));
+
+                        return;
+                    }
+
 
                     for (DataSnapshot userSnapshot: dataSnapshot.getChildren())
                     {
                         user = userSnapshot.getValue(User.class);
                         usersFireBase.add(user);
-                        //add to data base
-                    }
 
+                    }
                     userDB.addUsers(usersFireBase);
                     setAdapter(usersFireBase);
                     progressDialog.dismiss();
-
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     Toast.makeText(ListAllUser.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-
                 }
 
             });
         }
-        else
-        {
-            Log.i(TAG,"inside adpater and users.size()!=0 ");
-            setAdapter(users);
+        else setAdapter(users);
 
-        }
+
 
 
 
@@ -137,29 +160,17 @@ public class ListAllUser extends AppCompatActivity {
     public void attendre()
     {
         progressDialog=new ProgressDialog(this);
-
-
         progressDialog.setTitle("Chargement");
         progressDialog.setMessage("veuillez attendre ....");
-
         progressDialog.show();
 
-
     }
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.toolbar,menu);
-
-
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -176,25 +187,17 @@ public class ListAllUser extends AppCompatActivity {
         }
 
         if(item.getItemId()==R.id.suprimer)
-            startActivity(new Intent(this, SupprimerUser.class));
-
+            startActivity(new Intent(this, Chercher.class));
         if(item.getItemId()==R.id.chercher)
             startActivity(new Intent(this, MapsActivity.class));
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
-        Log.i(TAG,"inside OnResume");
         users=new ArrayList<>();
-
         readFromDataBase();
 
-        Toast.makeText(this, "hello : "+users.size(), Toast.LENGTH_SHORT).show();
     }
 }
