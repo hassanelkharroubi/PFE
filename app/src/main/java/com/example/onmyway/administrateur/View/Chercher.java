@@ -1,28 +1,25 @@
-package com.example.onmyway.administrateur;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.onmyway.administrateur.View;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.onmyway.CustomToast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.DB.UserDB;
-import com.example.onmyway.DialogMsg;
-import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
-import com.example.onmyway.UserInfo.GeoPoint;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.connection.Internet;
-import com.google.android.gms.maps.model.LatLng;
+import com.example.onmyway.User.Models.User;
+import com.example.onmyway.Utils.CustomToast;
+import com.example.onmyway.Utils.DialogMsg;
+import com.example.onmyway.administrateur.Models.Administrateur;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 
@@ -124,7 +122,7 @@ public class Chercher extends AppCompatActivity {
     }
     public void toast(String msg) {
         LayoutInflater layoutInflater= getLayoutInflater();
-        View toastLayout=layoutInflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.showtoast));
+        View toastLayout = layoutInflater.inflate(R.layout.toast, findViewById(R.id.showtoast));
         TextView textView= toastLayout.findViewById(R.id.toastMsg);
         textView.setText(msg+" ");
         Toast toast=new Toast(this);

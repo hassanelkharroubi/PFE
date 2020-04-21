@@ -1,4 +1,4 @@
-package com.example.onmyway;
+package com.example.onmyway.Service;
 
 import android.app.Application;
 import android.app.NotificationChannel;

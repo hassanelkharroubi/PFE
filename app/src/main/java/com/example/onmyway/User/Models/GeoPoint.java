@@ -1,7 +1,4 @@
-package com.example.onmyway.UserInfo;
-
-import android.location.Location;
-
+package com.example.onmyway.User.Models;
 
 
 public class GeoPoint {

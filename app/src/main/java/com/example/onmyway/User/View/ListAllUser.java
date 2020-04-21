@@ -1,4 +1,17 @@
-package com.example.onmyway;
+package com.example.onmyway.User.View;
+
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,34 +19,20 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.Bundle;
-
-
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.onmyway.DB.UserDB;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.administrateur.Chercher;
-import com.example.onmyway.administrateur.Home;
-import com.example.onmyway.administrateur.MapsActivity;
-import com.example.onmyway.administrateur.RegisterActivity;
+import com.example.onmyway.R;
+import com.example.onmyway.User.Models.User;
+import com.example.onmyway.Utils.CustomToast;
+import com.example.onmyway.administrateur.View.Chercher;
+import com.example.onmyway.administrateur.View.Home;
+import com.example.onmyway.administrateur.View.MapsActivity;
+import com.example.onmyway.administrateur.View.RegisterActivity;
+import com.example.onmyway.general.UserRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 
 import java.util.ArrayList;
 
@@ -87,7 +86,7 @@ public class ListAllUser extends AppCompatActivity {
     }
     public void toast(String msg) {
         LayoutInflater layoutInflater= getLayoutInflater();
-        View toastLayout=layoutInflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.showtoast));
+        View toastLayout = layoutInflater.inflate(R.layout.toast, findViewById(R.id.showtoast));
         TextView textView= toastLayout.findViewById(R.id.toastMsg);
         textView.setText(msg+" ");
         Toast toast=new Toast(this);

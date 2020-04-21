@@ -1,4 +1,4 @@
-package com.example.onmyway.administrateur;
+package com.example.onmyway.administrateur.View;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -21,15 +21,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.onmyway.Constants;
-import com.example.onmyway.CustomToast;
 import com.example.onmyway.DB.CustomFirebase;
-
-import com.example.onmyway.DialogMsg;
-import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
-import com.example.onmyway.UserInfo.GeoPoint;
-import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.User.Models.GeoPoint;
+import com.example.onmyway.User.Models.User;
+import com.example.onmyway.Utils.Constants;
+import com.example.onmyway.Utils.CustomToast;
+import com.example.onmyway.Utils.DialogMsg;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -53,8 +51,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -302,7 +298,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
 
-;
                         }
                     }
                 });

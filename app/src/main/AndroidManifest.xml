@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
-        android:name=".App"
+        android:name=".Service.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ChooseDestinationLocation"></activity>
+        <activity android:name=".User.View.ChooseDestinationLocation"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -36,18 +36,18 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".administrateur.UserPosition"
+            android:name=".User.View.UserPosition"
             android:label="@string/title_activity_user_position" />
-        <activity android:name=".administrateur.Chercher" />
-        <activity android:name=".ListAllUser" />
-        <activity android:name=".UserInfo.HomeUser" />
+        <activity android:name=".administrateur.View.Chercher" />
+        <activity android:name=".User.View.ListAllUser" />
+        <activity android:name=".User.View.HomeUser" />
         <activity
-            android:name=".administrateur.MapsActivity"
+            android:name=".administrateur.View.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".administrateur.Home" />
-        <activity android:name=".administrateur.RegisterActivity" />
-        <activity android:name=".Login" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".administrateur.View.Home" />
+        <activity android:name=".administrateur.View.RegisterActivity" />
+        <activity android:name=".general.Login" />
+        <activity android:name=".general.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

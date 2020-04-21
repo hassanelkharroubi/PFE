@@ -1,4 +1,5 @@
-package com.example.onmyway;
+package com.example.onmyway.general;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -6,10 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.administrateur.Chercher;
+
+import com.example.onmyway.R;
+import com.example.onmyway.User.Models.User;
+import com.example.onmyway.administrateur.View.Chercher;
+
 import java.util.ArrayList;
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.ViewHolder>{
 
@@ -31,8 +36,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        ((ViewHolder)holder).username.setText(mUsers.get(position).getfullName());
-        ((ViewHolder)holder).email.setText(mUsers.get(position).getEmail());
+        holder.username.setText(mUsers.get(position).getfullName());
+        holder.email.setText(mUsers.get(position).getEmail());
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

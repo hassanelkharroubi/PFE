@@ -1,12 +1,9 @@
-package com.example.onmyway.administrateur;
+package com.example.onmyway.administrateur.View;
 
 import android.content.Intent;
-
 import android.os.Build;
 import android.os.Bundle;
-
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,16 +12,16 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.onmyway.CustomToast;
 import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.R;
-import com.example.onmyway.UserInfo.User;
+import com.example.onmyway.User.Models.User;
+import com.example.onmyway.Utils.CustomToast;
+import com.example.onmyway.administrateur.Models.Administrateur;
 import com.example.onmyway.connection.Internet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

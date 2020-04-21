@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.onmyway.UserInfo.User;
-
 import androidx.annotation.Nullable;
+
+import com.example.onmyway.User.Models.User;
 
 import java.util.ArrayList;
 

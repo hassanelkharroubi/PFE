@@ -1,4 +1,4 @@
-package com.example.onmyway;
+package com.example.onmyway.Utils;
 
 import android.Manifest;
 

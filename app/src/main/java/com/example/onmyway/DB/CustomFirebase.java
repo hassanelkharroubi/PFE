@@ -1,19 +1,10 @@
 package com.example.onmyway.DB;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.onmyway.CustomToast;
-import com.example.onmyway.Login;
-import com.example.onmyway.R;
-import com.example.onmyway.UserInfo.HomeUser;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.administrateur.Administrateur;
-import com.example.onmyway.administrateur.Home;
+import com.example.onmyway.Utils.CustomToast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,7 +14,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class CustomFirebase implements ValueEventListener {

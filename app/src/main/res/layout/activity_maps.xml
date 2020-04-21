@@ -18,5 +18,5 @@ android:orientation="vertical">
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         map:mapType="normal"
-        tools:context=".administrateur.MapsActivity" />
+        tools:context=".administrateur.View.MapsActivity" />
 </LinearLayout>

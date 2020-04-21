@@ -1,14 +1,15 @@
-package com.example.onmyway;
+package com.example.onmyway.general;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
-import android.widget.Toolbar;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.onmyway.R;
 
 public class MainActivity extends AppCompatActivity {
 

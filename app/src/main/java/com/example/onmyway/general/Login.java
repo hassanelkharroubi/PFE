@@ -1,47 +1,41 @@
-package com.example.onmyway;
+package com.example.onmyway.general;
 
 
-
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.provider.Settings;
 import android.text.TextUtils;
-
 import android.util.Log;
 import android.util.Patterns;
-
 import android.view.View;
 import android.widget.EditText;
-
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.DB.UserDB;
-import com.example.onmyway.UserInfo.HomeUser;
-import com.example.onmyway.UserInfo.User;
-import com.example.onmyway.administrateur.Administrateur;
-import com.example.onmyway.administrateur.Home;
+import com.example.onmyway.R;
+import com.example.onmyway.User.Models.User;
+import com.example.onmyway.User.View.HomeUser;
+import com.example.onmyway.Utils.Constants;
+import com.example.onmyway.Utils.CustomToast;
+import com.example.onmyway.Utils.DialogMsg;
+import com.example.onmyway.administrateur.Models.Administrateur;
+import com.example.onmyway.administrateur.View.Home;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

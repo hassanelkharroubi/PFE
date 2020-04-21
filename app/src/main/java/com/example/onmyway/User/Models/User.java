@@ -1,6 +1,4 @@
-package com.example.onmyway.UserInfo;
-
-import androidx.annotation.NonNull;
+package com.example.onmyway.User.Models;
 
 public class User {
 

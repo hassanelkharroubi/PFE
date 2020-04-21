@@ -1,11 +1,4 @@
-package com.example.onmyway.administrateur;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
+package com.example.onmyway.User.View;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -18,14 +11,19 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
-import com.example.onmyway.ChooseDestinationLocation;
-import com.example.onmyway.Constants;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+
 import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.DB.DestinationDB;
-
 import com.example.onmyway.R;
 import com.example.onmyway.Service.MyBackgroundLocationService;
-import com.example.onmyway.UserInfo.GeoPoint;
+import com.example.onmyway.User.Models.GeoPoint;
+import com.example.onmyway.Utils.Constants;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;

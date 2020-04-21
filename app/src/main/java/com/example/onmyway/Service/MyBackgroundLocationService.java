@@ -1,28 +1,26 @@
 package com.example.onmyway.Service;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-
 import android.location.Location;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-
 import androidx.core.app.NotificationCompat;
 
-import com.example.onmyway.Constants;
 import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.R;
-import com.example.onmyway.UserInfo.GeoPoint;
-import com.example.onmyway.administrateur.UserPosition;
+import com.example.onmyway.User.Models.GeoPoint;
+import com.example.onmyway.User.View.UserPosition;
+import com.example.onmyway.Utils.Constants;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 

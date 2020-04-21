@@ -1,36 +1,29 @@
-package com.example.onmyway;
+package com.example.onmyway.User.View;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.Geocoder;
+import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-
-import android.location.Geocoder;
-
-import android.os.Bundle;
-import android.util.Log;
-
-
-
 import com.example.onmyway.DB.DestinationDB;
 import com.example.onmyway.GoogleDirection.FetchURL;
 import com.example.onmyway.GoogleDirection.TaskLoadedCallback;
-import com.example.onmyway.UserInfo.HomeUser;
-
-import com.example.onmyway.administrateur.UserPosition;
+import com.example.onmyway.R;
+import com.example.onmyway.Utils.Constants;
+import com.example.onmyway.Utils.CustomToast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
-
 
 import java.io.IOException;
 
@@ -77,7 +70,7 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         LatLng maroc=new LatLng(31.7218851,-11.6443955);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(maroc,Constants.DEFAULT_ZOOM-10));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(maroc, Constants.DEFAULT_ZOOM - 10));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override

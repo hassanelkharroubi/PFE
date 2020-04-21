@@ -1,32 +1,18 @@
-package com.example.onmyway.administrateur;
+package com.example.onmyway.administrateur.View;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-
 import com.example.onmyway.DB.CustomFirebase;
-import com.example.onmyway.ListAllUser;
-import com.example.onmyway.Login;
 import com.example.onmyway.R;
-import com.example.onmyway.connection.Internet;
+import com.example.onmyway.User.View.ListAllUser;
+import com.example.onmyway.administrateur.Models.Administrateur;
+import com.example.onmyway.general.Login;
 
 
 public class Home extends AppCompatActivity {
@@ -49,11 +35,11 @@ public class Home extends AppCompatActivity {
 
 
     public void ajouter(View view) {
-        startActivity(new Intent(this,RegisterActivity.class));
+        startActivity(new Intent(this, RegisterActivity.class));
     }
 
     public void supprimer(View view) {
-        startActivity(new Intent(this,Chercher.class));
+        startActivity(new Intent(this, Chercher.class));
 
     }
     public void chercher(View view) {
