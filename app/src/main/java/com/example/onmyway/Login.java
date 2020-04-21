@@ -3,12 +3,15 @@ package com.example.onmyway;
 
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import android.os.Message;
+import android.provider.Settings;
 import android.text.TextUtils;
 
 import android.util.Log;
@@ -20,18 +23,25 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import com.example.onmyway.DB.Firebase;
+import com.example.onmyway.DB.CustomFirebase;
+import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.UserInfo.HomeUser;
+import com.example.onmyway.UserInfo.User;
 import com.example.onmyway.administrateur.Administrateur;
 import com.example.onmyway.administrateur.Home;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -40,31 +50,29 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import dmax.dialog.SpotsDialog;
+import java.util.ArrayList;
+
+
 
 
 public class Login extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    //ProgressDialog pd;
-    //inherited from ProgressDialog
-    SpotsDialog pd;
 
     private FirebaseAuth mAuth;
     private DatabaseReference ref;
-    private static final String TAG="login";
+    private static final String TAG="Login";
 
     private String email;
-    private String password;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-
+    private DialogMsg dialogMsg=new DialogMsg();
+    private boolean gps_enabled=false;
+    private boolean mLocationPermissionGranted=false;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -73,72 +81,52 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        ref= FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.UserData));
-        if(checkGooglePlayServices())
+        FirebaseUser user= CustomFirebase.getCurrentUser();
+
+
+        ref= CustomFirebase.getDataRefLevel1(getResources().getString(R.string.UserData));
+
+        if(!checkGooglePlayServices())
         {
 
+            finish();
+        }
+
+        if (user != null) {
+            if(user.getEmail().equals(Administrateur.email))
+            {
+                Intent intent=new Intent(Login.this, Home.class);
+                startActivity(intent);
+
+                return;
+            }
+            UserDB userDB=new UserDB(Login.this);
+            ArrayList<User> users=userDB.getAllUsers();
+            Intent intent=new Intent(Login.this, HomeUser.class);
+            intent.putExtra("email",user.getEmail());
+            intent.putExtra("fullName",users.get(0).getfullName());
+            intent.putExtra("cin",users.get(0).getId());
+            startActivity(intent);
             finish();
 
         }
 
-        if (user != null) {
-            Intent intent=new Intent(Login.this, Home.class);
-            intent.putExtra("type","administrateur");
-            startActivity(intent);
-
-
-        }
-
-
-
-
-
-
-
     //get toolbar_layout
-        toolbar=findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //on doit programmer le bach home arrow on toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = CustomFirebase.getUserAuth();
         editTextEmail=findViewById(R.id.email);
         editTextPassword=findViewById(R.id.password);
 
 
+    }//end of create() method
 
 
-
-    }
-
-    private boolean checkGooglePlayServices() {
-
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        final int status = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (status != ConnectionResult.SUCCESS) {
-            Log.e(TAG, apiAvailability.getErrorString(status));
-
-            // ask user to update google play services.
-            Dialog dialog = apiAvailability.getErrorDialog(this,100,1);
-            if(dialog!=null)
-            {
-
-                dialog.setTitle("Please update your google play services");
-                dialog.setCancelable(true);
-                dialog.show();
-            }
-
-            return false;
-        } else {
-            Log.i(TAG, apiAvailability.getErrorString(status)+"hello");
-            // google play services is updated.
-            //your code goes here...
-            return true;
-        }
-    }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
@@ -154,21 +142,21 @@ public class Login extends AppCompatActivity {
 
 
         email=editTextEmail.getText().toString();
-        password=editTextPassword.getText().toString();
+        String password = editTextPassword.getText().toString();
         if(!isEmail(email) || password.isEmpty())
         {
-            msg("veuillez valider soit email soit le mot de passe");
+
+            CustomToast.toast("veuillez valider soit email soit le mot de passe",this);
             return;
 
 
         }
 
-        //we have to hide this sportdialog when we don't have connection
-        new SpotsDialog.Builder()
-                .setContext(this)
-                .setTheme(R.style.CustomPD)
-                .build()
-                .show();
+
+
+        dialogMsg.attendre(this,"Verification","Veuillez attendre ");
+
+
 
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -188,23 +176,36 @@ public class Login extends AppCompatActivity {
                             }
                             else
                             {
-
                                 Query query= ref.orderByKey().equalTo(mAuth.getUid());
                                 query.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if(dataSnapshot.hasChildren())
                                         {
+                                            for (DataSnapshot userData:dataSnapshot.getChildren())
+                                            {
+                                                User user=userData.getValue(User.class);
+                                                if(user!=null)
+                                                {
+                                                    UserDB userDB=new UserDB(Login.this);
+                                                    userDB.addUser(user);
+                                                    Intent intent=new Intent(Login.this, HomeUser.class);
+                                                    intent.putExtra("email",user.getEmail());
+                                                    intent.putExtra("fullName",user.getfullName());
+                                                    intent.putExtra("cin",user.getId());
+                                                    startActivity(intent);
+                                                    finish();
 
-                                            Intent intent=new Intent(Login.this, HomeUser.class);
-                                            intent.putExtra("type","user");
-                                            intent.putExtra("email",email);
-                                            startActivity(intent);
-                                            finish();
+                                                }
+                                            }
                                         }
+
+
+
                                         else
                                         {
-                                            Toast.makeText(Login.this, "cet utilisateur n'existe pas", Toast.LENGTH_SHORT).show();
+
+                                            CustomToast.toast("cet utilisateur n'existe pas",Login.this);
                                             mAuth.signOut();
                                         }
 
@@ -218,10 +219,12 @@ public class Login extends AppCompatActivity {
 
                             }
 
-                        }
+                        }//end of if statment of succusfull task of sigin
                         else
                             {
-                                msg("le mot de passe ou email est incorrect ");
+                                CustomToast.toast("le mot de passe ou email est incorrect ",Login.this);
+                                dialogMsg.hideDialog();
+
 
                           }
 
@@ -244,7 +247,7 @@ public class Login extends AppCompatActivity {
     }
 
     //check google play services
-    private boolean checkPlayServices()
+    private boolean checkGooglePlayServices()
     {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
@@ -252,12 +255,12 @@ public class Login extends AppCompatActivity {
         {
             if (apiAvailability.isUserResolvableError(resultCode))
             {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                apiAvailability.getErrorDialog(this, resultCode, Constants.GOOGLE_PLAY_SERVICES_REQUEST)
                         .show();
             } else
                 {
 
-                Toast.makeText(this, "This device is not supported.", Toast.LENGTH_SHORT).show();
+                CustomToast.toast("votre telephone n'est pas mise a jour ",getApplicationContext());
                 finish();
             }
             return false;
@@ -265,10 +268,97 @@ public class Login extends AppCompatActivity {
         return true;
     }
 
+    //ask for permissions
+    private boolean isGPSEnabled() {
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager != null)
+        {
+
+            if (gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                return gps_enabled;
+            new AlertDialog.Builder(this)
+                    .setMessage("Activer GPS !.")
+                    .setPositiveButton("Activer",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                    startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), Constants.GPS_REQUEST_CODE);
+                                }
+                            })
+                    .setCancelable(false)
+                    .show();
+        }
+
+        return false;
+
+    }//end of GPSEnabled()
+
+    //handle the result of startActivityForResult
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case Constants.GPS_REQUEST_CODE:
+            {
+
+                gps_enabled=isGPSEnabled();
+
+                break;
+            }
+        }
+    }//end of onActivityResult()
 
 
 
 
 
+    private void getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, Constants.REQUEST_FINE_LOCATION);
+        }
+    }//end of getLocationPermission
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        mLocationPermissionGranted = false;
+        switch (requestCode)
+        {
+            case Constants.REQUEST_FINE_LOCATION:
+            {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    mLocationPermissionGranted = true;
+                }
+                else
+                    getLocationPermission();
+            }
+        }
+
+    }//end of onRequestPermissionsResult(...);
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(checkGooglePlayServices())
+        {
+            getLocationPermission();
+            if(mLocationPermissionGranted)
+                gps_enabled=isGPSEnabled();
+        }
+
+
+    }
 }
 

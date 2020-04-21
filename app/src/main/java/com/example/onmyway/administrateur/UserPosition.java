@@ -1,98 +1,349 @@
 package com.example.onmyway.administrateur;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.View;
+
+import com.example.onmyway.ChooseDestinationLocation;
+import com.example.onmyway.Constants;
+import com.example.onmyway.DB.CustomFirebase;
+import com.example.onmyway.DB.DestinationDB;
 
 import com.example.onmyway.R;
+import com.example.onmyway.Service.MyBackgroundLocationService;
+import com.example.onmyway.UserInfo.GeoPoint;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
 
 public class UserPosition extends FragmentActivity implements OnMapReadyCallback {
 
+
+    public static final String TAG = "fromUserPosition";
+    //for google map
     private GoogleMap mMap;
-    private DatabaseReference locationRef;
+    private LatLng origin,destination;
+    private SupportMapFragment mapFragment;
+    private MarkerOptions markerOptions;
+//loaction permission
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private Boolean mLocationPermissionGranted= false;
+
+    private Polyline currentPolyline;
+
+    public static final double LAT=34.06491212039849;
+    public static final double LONG=-5.005186423818804;
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 200;
+    private boolean gps_enabled=false;
+    private LocationManager locationManager;
+
+
+    private static final int GPS_REQUEST_CODE = 100;
+
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final float DEFAULT_ZOOM = 15f;
+
+    private DatabaseReference ref;
+    private DestinationDB destinationDB;
+
+
+    //for stop backgound services
+    private boolean stop=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_position);
+        destinationDB=new DestinationDB(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        locationRef= FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.OnlineUserLocation));
-
-
+        ref=CustomFirebase.getDataRefLevel1(getString(R.string.OnlineUserLocation));
 
 
-        Query query=null;
-        Toast.makeText(this, getIntent().getStringExtra("id"), Toast.LENGTH_SHORT).show();
-        query=locationRef.orderByKey().equalTo(getIntent().getStringExtra("id"));
-        query.addValueEventListener(new ValueEventListener() {
+        markerOptions = new MarkerOptions();
+
+        locationCallback = new LocationCallback()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onLocationResult(LocationResult locationResult)
+            {
 
-                for (DataSnapshot snapshot: dataSnapshot.getChildren())
+                super.onLocationResult(locationResult);
+                //test if we have internet
+                //  connected=internet.conected();
+                for (Location location : locationResult.getLocations())
                 {
 
-                    Toast.makeText(UserPosition.this, snapshot.getKey(), Toast.LENGTH_SHORT).show();
+                    if (location != null )
+
+                    {
+                        GeoPoint geoPoint=new GeoPoint();
+                        geoPoint.setLongitude(location.getLongitude());
+                        geoPoint.setLatitude(location.getLatitude());
+                        geoPoint.setTime(location.getTime());
+                        geoPoint.setSpeed(location.getSpeed());
+
+                        origin=new LatLng(location.getLongitude(),location.getLatitude());
+                        moveCamera(new LatLng(location.getLongitude(),location.getLatitude()),DEFAULT_ZOOM);
+                        ref.child(CustomFirebase.getCurrentUser().getUid()).setValue(geoPoint);
+
+
+
+                    }
+
                 }
-
-
-
-
             }
+        };//end location callback
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(UserPosition.this, "Veuillez verfier votre connection", Toast.LENGTH_SHORT).show();
-
+        locationRequest();
+        getLocationPermission();
+        if(mLocationPermissionGranted)
+        {
+            isGPSEnabled();
+            if(gps_enabled)
+            {
+                initMap();
             }
-        });
+        }
 
 
 
-    }
+    }//end of create()
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    //init googme map
+    private void initMap() {
+
+
+        mapFragment.getMapAsync(this);
+
+
+    }//end of initMap()
+
+    //move camera to right place
+
+    private void moveCamera(LatLng latLng, float zoom) {
+
+        if(markerOptions!=null)
+            markerOptions= new MarkerOptions();
+        markerOptions.position(latLng);
+        mMap.addMarker(markerOptions);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }//end moveCamera()
+
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
-        // Add a marker in Sydney and move the camera
         Intent intent=getIntent();
-        Toast.makeText(this, intent.getDoubleExtra("lat",34)+" "+intent.getDoubleExtra("long",151), Toast.LENGTH_SHORT).show();
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+
+                mMap.addMarker(new MarkerOptions().position(latLng));
 
 
 
-        LatLng sydney = new LatLng(intent.getDoubleExtra("lat",34), intent.getDoubleExtra("long",151));
+            }
+        });//end of map click listener
+    }
 
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
+
+
+    private boolean isGPSEnabled() {
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager != null)
+        {
+
+            if (gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                return gps_enabled;
+            new AlertDialog.Builder(this)
+                    .setMessage("Activer GPS !.")
+                    .setPositiveButton("Activer",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                    startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), Constants.GPS_REQUEST_CODE);
+                                }
+                            })
+                    .setCancelable(false)
+                    .show();
+        }
+
+        return false;
+
+    }//end of GPSEnabled()
+
+    //handle the result of startActivityForResult
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case Constants.GPS_REQUEST_CODE:
+            {
+
+                if(gps_enabled=isGPSEnabled())
+                {
+                    initMap();
+                }
+                break;
+            }
+        }
+    }//end of onActivityResult()
+
+    public void showDirection(View view)
+        {
+            destination=destinationDB.getDestination();
+
+            Intent intent=new Intent(this,ChooseDestinationLocation.class);
+            intent.putExtra(TAG,TAG);
+            intent.putExtra("origin",origin);
+            Log.d(TAG,"origin="+origin.toString());
+            startActivity(intent);
+
+       }//end of showDirection
+
+
+
+    private void getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }//end of getLocationPermission
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        mLocationPermissionGranted = false;
+        switch (requestCode)
+        {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+            {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    mLocationPermissionGranted = true;
+                }
+                else
+                    getLocationPermission();
+            }
+        }
+
+    }//end of onRequestPermissionsResult(...);
+    //location request class
+    private void locationRequest()
+    {
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(Constants.UPDATE_INTERVAL); //use a value fo about 10 to 15s for a real app
+        locationRequest.setFastestInterval(Constants.FASTEST_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }//end of locationRequest();
+
+
+    private void startLocationUpdates() {
+
+        try {
+            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+        }
+    }//end of startLocationUpdates()
+    public void stopLocationUpdates() {
+        mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+    }//end of stopLocationUpdates()
+
+    //for background services
+    public void startService() {
+        Intent serviceIntent = new Intent(this, MyBackgroundLocationService.class);
+
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }//end of startService()
+
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, MyBackgroundLocationService.class);
+        stopService(serviceIntent);
+    }//end of stopService()
+
+
+    public void stop(View view)
+    {
+        stopService();
+        stop=true;
+        stopLocationUpdates();
+        finish();
+
+    }//end of stop()//work is done
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stopService();
+        if(gps_enabled=isGPSEnabled())
+        {
+            startLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!stop)
+        {
+            stopLocationUpdates();
+            startService();
+        }
+
     }
 }

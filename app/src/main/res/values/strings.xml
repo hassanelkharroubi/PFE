@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">OnMyWay</string>
+    <string name="google_map_api">AIzaSyByDP4PfrDDqXcIMyWuHXmt3CaOK0xHZi8</string>
+
+    <string name="server_key">AIzaSyBUMivigczqJ9zupdjCRU5DTk4VA6AkdtM</string>
+
+
     <string name="password">Mot de passe</string>
     <string name="username">Utilisateur</string>
     <string name="forgetpassword">Email ou mot de passe oublié ?</string>
@@ -14,5 +19,8 @@
     <string name="OnlineUserLocation">OnlineUserLocation</string>
     <string name="OfflineUserLocation">OfflineUserLocation</string>
     <string name="title_activity_user_position">Map</string>
+    <string name="Start">Commencer le travail</string>
+    <string name="Stop">Arreter le travail</string>
+    <string name="showDirection">afficher la direction</string>
 
 </resources>

@@ -1,20 +1,18 @@
 package com.example.onmyway.administrateur;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.os.Build;
 import android.os.Bundle;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.onmyway.CustomToast;
+import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.DB.UserDB;
 import com.example.onmyway.R;
 import com.example.onmyway.UserInfo.User;
@@ -33,7 +33,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import dmax.dialog.SpotsDialog;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -61,7 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference myRef;
 
-    ProgressDialog progressDialog;
     //for sqlite data base
     private UserDB userDB;
     //check internet
@@ -82,9 +80,9 @@ public class RegisterActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference(getResources().getString(R.string.UserData));
         userDB=new UserDB(this);
-        internet=new Internet(this);
         //start new Thread to check network state and internet acess
-        internet.start();
+
+        connected=new Internet(this).connected();
 
 
 
@@ -99,7 +97,8 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.driver));
 
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+
+        mAuth= CustomFirebase.getUserAuth();
 
         editTextEmail=findViewById(R.id.email);
         editTextPassword=findViewById(R.id.password);
@@ -121,20 +120,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     public void register(View view) {
-
-        internet.start();
-        connected=internet.conected();
-        if(!connected)
-        {
-            msg("Veuillez verifier votre internet ...");
-            return;
-        }
-
+        connected=new Internet(this).connected();
 
 
         if(allInputValid())
         {
-          attendre();
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
             {
@@ -147,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 //i the same time we have to add this user to local data base
                                 userDB.addUser(user);
 
-                                msg("Authentication success.");
+                                CustomToast.toast("Authentication success.",RegisterActivity.this);
 
                                 mAuth.signOut();
                                 mAuth.signInWithEmailAndPassword(Administrateur.email,Administrateur.password);
@@ -156,7 +146,8 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                msg("on ne peut pas ajouter neveau utilidateur .");
+
+                                CustomToast.toast("on ne peut pas ajouter neveau utilidateur !Verfier votre connection.",RegisterActivity.this);
 
 
                             }
@@ -166,7 +157,8 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else
         {
-            msg("Veuilez verifier les donnees que vouz avez saisi ....!");
+
+            CustomToast.toast("Veuilez verifier les donnees que vouz avez saisi ....!",this);
         }
 
 
@@ -182,40 +174,13 @@ public class RegisterActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void attendre()
-    {
-        progressDialog=new ProgressDialog(this);
-
-
-        progressDialog.setTitle("Chargement");
-        progressDialog.setMessage("veuillez attendre ....");
-
-        progressDialog.show();
-
-    }
 
 
 
-    /*
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
-    }
-    */
 
     //fonction de verification email
     public static boolean isEmail(CharSequence target) {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
-    }
-
-    public void  msg(String msg)
-    {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-
-
     }
 
 
@@ -242,9 +207,9 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        connected=internet.conected();
-
-
+        connected=new Internet(this).connected();
 
     }
+
+
 }

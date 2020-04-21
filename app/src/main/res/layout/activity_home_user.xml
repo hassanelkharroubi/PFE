@@ -7,4 +7,86 @@
     android:orientation="vertical"
     tools:context=".UserInfo.HomeUser">
 
+    <include layout="@layout/toolbar_layout" />
+
+    <TextView
+        android:id="@+id/fullname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_field"
+        android:ems="10"
+        android:textColor="@color/Black"
+        android:paddingLeft="@dimen/padding_left"
+        android:paddingTop="@dimen/pading_top"
+        android:paddingBottom="@dimen/padding_bottom"
+        android:text="@string/fullname"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit"
+
+        android:ems="10"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="addresse"
+        android:textColor="@color/Black"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <Button
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/edit"
+            android:onClick="start"
+            android:text="@string/Start" />
+
+    <Button
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/edit"
+        android:onClick="choseLocation"
+        android:text="chosir destination" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/edit"
+        android:onClick="signOut"
+        android:text="Deconnecter" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mapshow">
+        <fragment
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".UserInfo.HomeUser" />
+    </LinearLayout>
+
+
+
 </LinearLayout>
+

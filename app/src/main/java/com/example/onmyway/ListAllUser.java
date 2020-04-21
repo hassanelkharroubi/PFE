@@ -48,7 +48,7 @@ public class ListAllUser extends AppCompatActivity {
     private Toolbar toolbar;
 
     private DatabaseReference ref;
-    private final String TAG="allUsers";
+    private final String TAG="ListAllUser";
 
     //for sqlite database
     private UserDB userDB;
@@ -114,7 +114,8 @@ public class ListAllUser extends AppCompatActivity {
                     if(!dataSnapshot.hasChildren())
                     {
                        progressDialog.dismiss();
-                       toast("pas de cheffaures! veuillez ajouter neveau");
+
+                       CustomToast.toast("pas de cheffaures! veuillez ajouter neveau",ListAllUser.this);
                        startActivity(new Intent(ListAllUser.this, Home.class));
 
                         return;
@@ -163,7 +164,6 @@ public class ListAllUser extends AppCompatActivity {
         progressDialog.setTitle("Chargement");
         progressDialog.setMessage("veuillez attendre ....");
         progressDialog.show();
-
     }
 
     @Override

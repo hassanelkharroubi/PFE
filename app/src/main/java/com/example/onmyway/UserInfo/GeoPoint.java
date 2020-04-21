@@ -1,15 +1,38 @@
 package com.example.onmyway.UserInfo;
 
-import androidx.annotation.Nullable;
+import android.location.Location;
+
+
 
 public class GeoPoint {
+
+    private double speed;
+    private double time;
     private double latitude;
     private double longitude;
-    public GeoPoint(){}
+    public GeoPoint() { }
 
-    public GeoPoint(double latitude, double longitude) {
+    public GeoPoint(double speed, double time, double latitude, double longitude) {
+        this.speed = speed;
+        this.time = time;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getTime() {
+        return time;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
     }
 
     public double getLatitude() {
@@ -26,16 +49,5 @@ public class GeoPoint {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-    }
-
-    public boolean equals(@Nullable GeoPoint geoPoint) {
-
-        if(latitude==geoPoint.getLatitude() && longitude==geoPoint.getLongitude())
-            return  true;
-        return false;
-
-
-
-
     }
 }

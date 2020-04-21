@@ -12,29 +12,30 @@ import java.net.URL;
 public class Internet extends Thread{
 
     String TAG="CONNECTION";
+    private boolean connected=false;
     private Context context;
-    private Boolean connected;
+
     public Internet(Context context)
     {
         this.context=context;
-        connected=false;
     }
 
     @Override
     public void run() {
         super.run();
-        connected=hasInternetAccess(context);
+        this.connected=hasInternetAccess();
     }
 
-    private boolean isNetworkAvailable(Context context) {
+    private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null;
     }
 
-    public boolean hasInternetAccess(Context context) {
-        if (isNetworkAvailable(context)) {
+    private boolean hasInternetAccess() {
+        if (isNetworkAvailable())
+        {
             try {
                 HttpURLConnection urlc = (HttpURLConnection)
                         (new URL("http://clients3.google.com/generate_204")
@@ -45,18 +46,22 @@ public class Internet extends Thread{
                 urlc.connect();
                 return (urlc.getResponseCode() == 204 &&
                         urlc.getContentLength() == 0);
-            } catch (IOException e) {
-                Log.e(TAG, "Error checking internet connection", e);
+            } catch (IOException e)
+            {
+                Log.d(TAG, "Error checking internet connection");
+                return false;
             }
-        } else {
-            Log.d(TAG, "No network available!");
         }
+        else
+              Log.d(TAG, "No network available!");
+
         return false;
     }
 
-    public Boolean conected()
+
+    public  Boolean connected()
     {
         start();
-        return connected;
+        return this.connected;
     }
 }

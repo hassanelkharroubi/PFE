@@ -12,12 +12,20 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.onmyway.CustomToast;
+import com.example.onmyway.DB.CustomFirebase;
 import com.example.onmyway.DB.UserDB;
+import com.example.onmyway.DialogMsg;
+import com.example.onmyway.ListAllUser;
 import com.example.onmyway.R;
 import com.example.onmyway.UserInfo.GeoPoint;
 import com.example.onmyway.UserInfo.User;
 import com.example.onmyway.connection.Internet;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +37,7 @@ import java.util.ArrayList;
 
 public class Chercher extends AppCompatActivity {
 
+    private static final String TAG = "Chercher";
     private TextView chercherV;
     private TextView fullnameV;
     private TextView emailV;
@@ -47,12 +56,14 @@ public class Chercher extends AppCompatActivity {
     UserDB userDB;
 //on a besoin de ca  lorsqu'on va faire des requete au firebase
     private ProgressDialog progressDialog;
+    private DialogMsg dialogMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chercher);
 
+        dialogMsg=new DialogMsg();
 
 
 //on va utiliser cet objet pour les requetes comme sql
@@ -75,12 +86,6 @@ public class Chercher extends AppCompatActivity {
         {
 
             ref= FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.UserData));
-            if(ref.getPath().isEmpty())
-            {
-                Toast.makeText(this, "hhhhhhhhhhh", Toast.LENGTH_SHORT).show();
-            }
-
-
 
             ref.addValueEventListener(new ValueEventListener(){
                 @Override
@@ -167,10 +172,11 @@ public class Chercher extends AppCompatActivity {
 
         }
 
-        toast("veuillez tapez le CIN ");
+
+        CustomToast.toast("veuillez tapez le CIN ",Chercher.this);
 
 
-    }
+    }//end of chercher user
     private User chercher(String str)
     {
         int i=0;
@@ -185,16 +191,14 @@ public class Chercher extends AppCompatActivity {
                     return users.get(i);
 
             }
-
-
-
             i++;
         }
 
         return null;
     }
     public void supprimerUser(View view) {
-
+        dialogMsg.attendre(this,"Supprimer","Chercher user");
+        userDB.deleteUser(keyWord.toLowerCase());
         findUserInFireBaseByCin(true);
 
         fullnameV.setVisibility(View.GONE);
@@ -211,95 +215,62 @@ public class Chercher extends AppCompatActivity {
 
     }
     public void afficherSurMap(View view) {
-        attendre();
+
         findUserInFireBaseByCin(false);
     }
-    public void attendre()
-    {
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setTitle("Chargement");
-        progressDialog.setMessage("veuillez attendre ....");
-        progressDialog.show();
-    }
+
 
     //this boolean is used for to detect if we are going to show on map(false) or going to delete user(true)
     private void findUserInFireBaseByCin(final boolean delete)
     {
         Query query=null;
             query=refUserData.orderByChild("id").equalTo(keyWord);
-            if(query==null)
-            {
 
-                toast("cet utilisateur n'existe pas");
-                return;
-            }
+        dialogMsg.attendre(this,"Rechercher....","veuillez attende....");
 
             query.addValueEventListener(new ValueEventListener() {
+
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    for (DataSnapshot snapshot: dataSnapshot.getChildren())
-                    {
-                        if(snapshot.exists())
-                        {
+                    for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                        if (snapshot.exists()) {
 
-                            idUserInFireBase=snapshot.getKey();
-                            if(delete)
-                            {
+                            idUserInFireBase = snapshot.getKey();
+                            if (delete) {
+                                User deleteUser = snapshot.getValue(User.class);
+                                CustomFirebase.getUserAuth().signOut();
+                                CustomFirebase.DeleteUser(deleteUser.getEmail(), deleteUser.getPassword());
                                 refUserData.child(idUserInFireBase).removeValue();
-                                progressDialog.dismiss();
+                                CustomFirebase.getUserAuth().signInWithEmailAndPassword(Administrateur.email, Administrateur.password)
+                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                startActivity(new Intent(Chercher.this, Home.class));
+                                                finish();
+
+                                            }
+                                        });
+
+                                dialogMsg.hideDialog();
                                 return;
                             }
-                            //search for geocoordiate
+                            dialogMsg.hideDialog();
 
-                            locationRef.orderByKey().equalTo(idUserInFireBase).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                    for (DataSnapshot snapshot: dataSnapshot.getChildren())
-                                    {
-                                        if(snapshot.exists())
-                                        {
-
-                                            Intent intent=new Intent(Chercher.this,UserPosition.class);
-                                            intent.putExtra("id",idUserInFireBase);
-                                            GeoPoint newGeoPoint=snapshot.getValue(GeoPoint.class);
-                                            intent.putExtra("lat",newGeoPoint.getLatitude());
-                                            intent.putExtra("long",newGeoPoint.getLongitude());
-                                            //hide progressbar
-                                            progressDialog.dismiss();
-                                            startActivity(intent);
-
-                                        }
-                                        else
-                                        {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(Chercher.this, "cette utilisateur n'pas de position actuel ", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(Chercher.this, "Veuillez verfier votre connection", Toast.LENGTH_SHORT).show();
-
-                                }
-                            });
-
-
-                        }
-
-
-                            progressDialog.dismiss();
+                            Intent intent = new Intent(Chercher.this, MapsActivity.class);
+                            intent.putExtra("id", idUserInFireBase);
+                            startActivity(intent);
 
 
 
-                    }
+                        }//end of test if snapshot.exist()
+
+                        dialogMsg.hideDialog();
+
+                    }//end of for loop
 
 
-                }
+                }//end of DataChange()
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -309,12 +280,12 @@ public class Chercher extends AppCompatActivity {
                 }
             });
 
-
-
     }
     @Override
     protected void onResume() {
         super.onResume();
+
+
         String cin=getCinFromIntent();
 
         if(cin!=null)
@@ -322,8 +293,6 @@ public class Chercher extends AppCompatActivity {
             User searchUser=chercher(cin.toLowerCase());
             //search keyword
             keyWord=cin;
-
-
             if(searchUser!=null)
             {
                 chercherV.setText(cin);

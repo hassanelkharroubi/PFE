@@ -1,8 +1,0 @@
-//Hi montasser
-
-1ere j'ai ajoute 2 classes:
---ListAllUser avec son activity "activity_list_all_user.xml" mis pour contenir recyclerView
-et dans cette classe on a ajoute toolbar avec qlq progrmmation des choix des listes
---UserRecyclerAdapter bien sure ici il y a le l'implimetation de recyclerView(valable on github)
-et in a utlise a a specifique layout pour affichier notre structure ce sont dans le fichier xml dans
-le dossier  layout  s'appel layout_user_list_item tu peut le changer pour bien configurer layout
