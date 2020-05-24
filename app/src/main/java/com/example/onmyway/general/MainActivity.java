@@ -13,20 +13,16 @@ import com.example.onmyway.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    Handler handler;
-    ImageView img;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        ImageView img;
         img = findViewById(R.id.img);
          img.animate().alpha(4000).setDuration(0);
-
-         handler = new Handler();
+        Handler handler = new Handler();
          handler.postDelayed(new Runnable() {
              @Override
              public void run()
@@ -35,6 +31,6 @@ public class MainActivity extends AppCompatActivity {
                  startActivity(dsp);
                  finish();
              }
-                                             },1000);
+         }, 1000);
     }
 }

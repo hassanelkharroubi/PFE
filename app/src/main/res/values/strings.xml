@@ -18,6 +18,7 @@
     <string name="UserData">UserData</string>
     <string name="OnlineUserLocation">OnlineUserLocation</string>
     <string name="OfflineUserLocation">OfflineUserLocation</string>
+    <string name="DurationToDestination">DurationToDestination</string>
     <string name="title_activity_user_position">Map</string>
     <string name="Start">Commencer le travail</string>
     <string name="Stop">Arreter le travail</string>

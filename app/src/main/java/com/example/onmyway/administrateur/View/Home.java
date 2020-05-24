@@ -8,10 +8,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.onmyway.DB.CustomFirebase;
+import com.example.onmyway.Models.Administrateur;
+import com.example.onmyway.Models.CustomFirebase;
 import com.example.onmyway.R;
-import com.example.onmyway.User.View.ListAllUser;
-import com.example.onmyway.administrateur.Models.Administrateur;
 import com.example.onmyway.general.Login;
 
 
@@ -19,11 +18,12 @@ public class Home extends AppCompatActivity {
 
     private static final String TAG = "Home";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+
         TextView textView1 = findViewById(R.id.wlcm);
         //get toolbar_layout
         Toolbar toolbar = findViewById(R.id.toolbar);

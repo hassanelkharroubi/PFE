@@ -12,7 +12,7 @@ import com.example.onmyway.R;
 
 public class CustomToast {
 
-    public static void toast(String msg, Context context)
+    public static void toast(Context context, String msg)
     {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
        // LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -21,7 +21,7 @@ public class CustomToast {
         TextView textView= toastLayout.findViewById(R.id.toastMsg);
         textView.setText(msg+" ");
         Toast toast=new Toast(context);
-        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setDuration(Toast.LENGTH_LONG);
         toast.setView(toastLayout);
         toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, -20);
         toast.show();

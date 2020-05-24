@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".User.View.ChooseDestinationLocation"></activity>
+        <activity android:name=".User.View.ChooseDestinationLocation" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -39,7 +39,7 @@
             android:name=".User.View.UserPosition"
             android:label="@string/title_activity_user_position" />
         <activity android:name=".administrateur.View.Chercher" />
-        <activity android:name=".User.View.ListAllUser" />
+        <activity android:name=".administrateur.View.ListAllUser" />
         <activity android:name=".User.View.HomeUser" />
         <activity
             android:name=".administrateur.View.MapsActivity"

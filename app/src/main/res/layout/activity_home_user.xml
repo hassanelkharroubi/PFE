@@ -35,6 +35,8 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="addresse"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:textColor="@color/Black"
         android:textSize="14sp"
         android:textStyle="bold" />
@@ -61,16 +63,6 @@
         android:background="@drawable/edit"
         android:onClick="choseLocation"
         android:text="chosir destination" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@drawable/edit"
-        android:onClick="signOut"
-        android:text="Deconnecter" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,4 +1,6 @@
 package com.example.onmyway.Service;
 
-public class GeoCodingDoneListener {
+public interface GeoCodingDoneListener {
+
+    void geoCodingDone(Object result);
 }

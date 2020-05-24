@@ -75,20 +75,6 @@
             android:onClick="login"
             />
 
-        <TextView
-            android:layout_width="300dp"
-            android:layout_height="25dp"
-
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:text="@string/forgetpassword"
-            android:textColor="#000"
-
-            android:textSize="17dp" />
-
 
     </LinearLayout>
 

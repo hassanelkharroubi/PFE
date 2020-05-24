@@ -43,8 +43,10 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
 
             JSONArray route = jObject.getJSONArray("routes");
             JSONObject object = route.getJSONObject(0);
+
             JSONArray legs = object.getJSONArray("legs");
             JSONObject legsObjects = legs.getJSONObject(0);
+            //own modification
 //referece https://stackoverflow.com/questions/55491798/how-to-get-duration-and-distance-in-json-object-return-by-google
 //get the distance
             JSONObject distanceJ = legsObjects.getJSONObject("distance");
@@ -56,7 +58,7 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
 
             Log.d("infoJson","distance="+distance+"duration="+duration);
 
-            Log.d("mylog", jsonData[0].toString());
+            Log.d("mylog", jsonData[0]);
             DataParser parser = new DataParser();
             Log.d("mylog", parser.toString());
 
@@ -100,7 +102,7 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
                 lineOptions.color(Color.MAGENTA);
             } else {
                 lineOptions.width(20);
-                lineOptions.color(Color.BLUE);
+                lineOptions.color(Color.GREEN);
             }
             Log.d("mylog", "onPostExecute lineoptions decoded");
         }

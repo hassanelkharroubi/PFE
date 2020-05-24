@@ -1,4 +1,4 @@
-package com.example.onmyway.DB;
+package com.example.onmyway.Models;
 
 import android.content.Context;
 
@@ -72,7 +72,7 @@ public class CustomFirebase implements ValueEventListener {
 
     @Override
     public void onCancelled(@NonNull DatabaseError databaseError) {
-        CustomToast.toast("erreur de connection",context);
+        CustomToast.toast(context, "erreur de connection");
 
     }//end of onCancelled()
 

@@ -5,6 +5,6 @@ package com.example.onmyway.GoogleDirection;
  */
 
 public interface TaskLoadedCallback {
-    void onTaskDone(String distance,String duree,Object... values);
+    void onTaskDone(String distance, String duration, Object... values);
 }
 

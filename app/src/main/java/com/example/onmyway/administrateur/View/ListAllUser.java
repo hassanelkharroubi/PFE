@@ -1,17 +1,11 @@
-package com.example.onmyway.User.View;
+package com.example.onmyway.administrateur.View;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,14 +13,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onmyway.DB.UserDB;
+import com.example.onmyway.Models.User;
+import com.example.onmyway.Models.UserDB;
 import com.example.onmyway.R;
-import com.example.onmyway.User.Models.User;
 import com.example.onmyway.Utils.CustomToast;
-import com.example.onmyway.administrateur.View.Chercher;
-import com.example.onmyway.administrateur.View.Home;
-import com.example.onmyway.administrateur.View.MapsActivity;
-import com.example.onmyway.administrateur.View.RegisterActivity;
+import com.example.onmyway.Utils.DialogMsg;
 import com.example.onmyway.general.UserRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,10 +33,6 @@ public class ListAllUser extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-    private UserRecyclerAdapter adapter;
-
-    private Toolbar toolbar;
-
     private DatabaseReference ref;
     private final String TAG="ListAllUser";
 
@@ -53,15 +40,16 @@ public class ListAllUser extends AppCompatActivity {
     private UserDB userDB;
     private ArrayList<User> usersFireBase,users;
     private  User user;
-    AlertDialog alertDialog;
+    private DialogMsg dialogMsg = new DialogMsg();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_list_all_user);
 
         //get toolbar_layout
-        toolbar=findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
 
         setSupportActionBar(toolbar);
@@ -79,24 +67,8 @@ public class ListAllUser extends AppCompatActivity {
 
         ref=FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.UserData));
         userDB=new UserDB(this);
-
         readFromDataBase();
-
-
     }
-    public void toast(String msg) {
-        LayoutInflater layoutInflater= getLayoutInflater();
-        View toastLayout = layoutInflater.inflate(R.layout.toast, findViewById(R.id.showtoast));
-        TextView textView= toastLayout.findViewById(R.id.toastMsg);
-        textView.setText(msg+" ");
-        Toast toast=new Toast(this);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(toastLayout);
-        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER, 0, 0);
-        toast.show();
-    }
-
-
 
     public void readFromDataBase()
     {
@@ -104,17 +76,18 @@ public class ListAllUser extends AppCompatActivity {
         if(users.size()==0)
         {
             //show progress dialog
+            dialogMsg.attendre(this, "Recherche", "Veuillez attendre .....");
 
             ref.addValueEventListener(new ValueEventListener(){
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    attendre();
+                    dialogMsg.hideDialog();
 
-                    if(!dataSnapshot.hasChildren())
+                    if (!dataSnapshot.exists())
                     {
-                       progressDialog.dismiss();
 
-                       CustomToast.toast("pas de cheffaures! veuillez ajouter neveau",ListAllUser.this);
+
+                        CustomToast.toast(ListAllUser.this, "pas de cheffaures! veuillez ajouter neveau");
                        startActivity(new Intent(ListAllUser.this, Home.class));
 
                         return;
@@ -129,17 +102,17 @@ public class ListAllUser extends AppCompatActivity {
                     }
                     userDB.addUsers(usersFireBase);
                     setAdapter(usersFireBase);
-                    progressDialog.dismiss();
+
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    Toast.makeText(ListAllUser.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    CustomToast.toast(ListAllUser.this, "Veuillez verfier votre connexion ....");
                 }
 
             });
-        }
+        }//if users array is not 0
         else setAdapter(users);
 
 
@@ -150,26 +123,21 @@ public class ListAllUser extends AppCompatActivity {
 
     private void setAdapter(ArrayList<User> list)
     {
-        adapter=new UserRecyclerAdapter(list, ListAllUser.this);
+        UserRecyclerAdapter adapter = new UserRecyclerAdapter(list, ListAllUser.this);
 
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(ListAllUser.this));
 
     }
-    public void attendre()
-    {
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setTitle("Chargement");
-        progressDialog.setMessage("veuillez attendre ....");
-        progressDialog.show();
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.toolbar,menu);
+        menu.removeItem(R.id.enligne);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -188,7 +156,7 @@ public class ListAllUser extends AppCompatActivity {
         if(item.getItemId()==R.id.suprimer)
             startActivity(new Intent(this, Chercher.class));
         if(item.getItemId()==R.id.chercher)
-            startActivity(new Intent(this, MapsActivity.class));
+            startActivity(new Intent(this, Chercher.class));
         return super.onOptionsItemSelected(item);
     }
 

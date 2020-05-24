@@ -3,8 +3,6 @@ package com.example.onmyway.administrateur.View;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,13 +11,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.onmyway.DB.CustomFirebase;
-import com.example.onmyway.DB.UserDB;
+import com.example.onmyway.Models.Administrateur;
+import com.example.onmyway.Models.CustomFirebase;
+import com.example.onmyway.Models.User;
+import com.example.onmyway.Models.UserDB;
 import com.example.onmyway.R;
-import com.example.onmyway.User.Models.User;
 import com.example.onmyway.Utils.CustomToast;
 import com.example.onmyway.Utils.DialogMsg;
-import com.example.onmyway.administrateur.Models.Administrateur;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -120,17 +118,7 @@ public class Chercher extends AppCompatActivity {
         }
 
     }
-    public void toast(String msg) {
-        LayoutInflater layoutInflater= getLayoutInflater();
-        View toastLayout = layoutInflater.inflate(R.layout.toast, findViewById(R.id.showtoast));
-        TextView textView= toastLayout.findViewById(R.id.toastMsg);
-        textView.setText(msg+" ");
-        Toast toast=new Toast(this);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(toastLayout);
-        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER, 0, 0);
-        toast.show();
-    }
+
     public void chercherUser(View view)
     {
         keyWord=chercherV.getText().toString();
@@ -138,21 +126,17 @@ public class Chercher extends AppCompatActivity {
         if(!keyWord.isEmpty())
         {
             //query by keyword in userDB
-            keyWord=keyWord.toLowerCase();
-            users=userDB.getAllUsers();
+            keyWord = keyWord.toUpperCase();
+            user = userDB.findUserByCin(keyWord);
 
-            if(users.size()==0)
+            if (user == null)
             {
-                toast("vous n'avez aucun cheuffaur");
+
+                CustomToast.toast(this, "vous n'avez aucun cheuffaur");
 
                 return;
             }
 
-
-                user=chercher(keyWord);
-
-                if(user!=null)
-                {
                     fullnameV.setText(user.getfullName().toUpperCase());
                     cinV.setText(user.getId());
                     emailV.setText(user.getEmail());
@@ -162,38 +146,13 @@ public class Chercher extends AppCompatActivity {
                     emailV.setVisibility(View.VISIBLE);
                     operationV.setVisibility(View.VISIBLE);
 
-                }
 
-
-            return;
-
-
-        }
-
-
-        CustomToast.toast("veuillez tapez le CIN ",Chercher.this);
+        } else
+            CustomToast.toast(Chercher.this, "veuillez tapez le CIN ");
 
 
     }//end of chercher user
-    private User chercher(String str)
-    {
-        int i=0;
 
-        while(users.size()>i)
-        {
-            String cin=users.get(i).getId();
-            if(cin!=null)
-            {
-
-                if(cin.toLowerCase().equals(str))
-                    return users.get(i);
-
-            }
-            i++;
-        }
-
-        return null;
-    }
     public void supprimerUser(View view) {
         dialogMsg.attendre(this,"Supprimer","Chercher user");
         userDB.deleteUser(keyWord.toLowerCase());
@@ -256,6 +215,7 @@ public class Chercher extends AppCompatActivity {
                             dialogMsg.hideDialog();
 
                             Intent intent = new Intent(Chercher.this, MapsActivity.class);
+                            intent.putExtra("cin", keyWord);
                             intent.putExtra("id", idUserInFireBase);
                             startActivity(intent);
 
@@ -283,12 +243,11 @@ public class Chercher extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
         String cin=getCinFromIntent();
 
         if(cin!=null)
         {
-            User searchUser=chercher(cin.toLowerCase());
+            User searchUser = userDB.findUserByCin(cin.toUpperCase());
             //search keyword
             keyWord=cin;
             if(searchUser!=null)

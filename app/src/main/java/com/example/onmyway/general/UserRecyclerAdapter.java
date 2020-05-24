@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.onmyway.Models.User;
 import com.example.onmyway.R;
-import com.example.onmyway.User.Models.User;
 import com.example.onmyway.administrateur.View.Chercher;
 
 import java.util.ArrayList;
@@ -61,7 +61,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     {
         TextView username, email;
         LinearLayout container;
-        public ViewHolder(View itemView) {
+
+        private ViewHolder(View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.username);
             email = itemView.findViewById(R.id.email);

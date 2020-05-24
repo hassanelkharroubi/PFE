@@ -1,4 +1,4 @@
-package com.example.onmyway.User.Models;
+package com.example.onmyway.Models;
 
 public class User {
 

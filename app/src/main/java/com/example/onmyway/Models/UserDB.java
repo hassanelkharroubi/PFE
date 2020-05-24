@@ -1,4 +1,4 @@
-package com.example.onmyway.DB;
+package com.example.onmyway.Models;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,11 +9,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.onmyway.User.Models.User;
-
 import java.util.ArrayList;
 
 public class UserDB extends SQLiteOpenHelper {
+
+    public static final String TAG = "UserDB";
 
     private static final String BD_NAME="GestionUSER";
     private static final String TABLE="user";
@@ -72,21 +72,27 @@ public class UserDB extends SQLiteOpenHelper {
        return deleted;
 
     }
-    public void deleteAllUser()
+
+    public User findUserByCin(final String cin)
+
     {
-        SQLiteDatabase db=getWritableDatabase();
+        Log.d(TAG, cin);
+        User user = null;
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE + " WHERE upper(" + ID + ") =?";
+        Cursor cursor = db.rawQuery(query, new String[]{cin});
+        if (cursor.moveToFirst()) {
 
-      db.execSQL("delete from "+ TABLE);
-      db.close();
+            user = new User();
+            user.setEmail(cursor.getString(cursor.getColumnIndex(EMAIL)));
+            user.setfullName(cursor.getString(cursor.getColumnIndex(NAME)));
+            user.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            user.setPassword(cursor.getString(cursor.getColumnIndex(PASSWORD)));
+        }
+        db.close();
+        cursor.close();
 
-
-    }
-
-
-    public void updateUser()
-    {
-        SQLiteDatabase db=getWritableDatabase();
-
+        return user;
     }
 
     public ArrayList<User> getAllUsers()
@@ -115,6 +121,7 @@ public class UserDB extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         }
+        cursor.close();
         return users;
 
 

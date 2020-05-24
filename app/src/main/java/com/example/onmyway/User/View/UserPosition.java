@@ -1,6 +1,5 @@
 package com.example.onmyway.User.View;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,7 +7,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -18,11 +16,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.onmyway.DB.CustomFirebase;
-import com.example.onmyway.DB.DestinationDB;
+import com.example.onmyway.GoogleDirection.FetchURL;
+import com.example.onmyway.GoogleDirection.ShowDirection;
+import com.example.onmyway.GoogleDirection.TaskLoadedCallback;
+import com.example.onmyway.Models.CustomFirebase;
+import com.example.onmyway.Models.DestinationDB;
+import com.example.onmyway.Models.GeoPoint;
 import com.example.onmyway.R;
 import com.example.onmyway.Service.MyBackgroundLocationService;
-import com.example.onmyway.User.Models.GeoPoint;
 import com.example.onmyway.Utils.Constants;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -35,17 +36,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.firebase.database.DatabaseReference;
 
 
-public class UserPosition extends FragmentActivity implements OnMapReadyCallback {
+public class UserPosition extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback {
 
 
     public static final String TAG = "fromUserPosition";
     //for google map
     private GoogleMap mMap;
-    private LatLng origin,destination;
+    private LatLng origin;
     private SupportMapFragment mapFragment;
     private MarkerOptions markerOptions;
 //loaction permission
@@ -53,45 +53,25 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback locationCallback;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Boolean mLocationPermissionGranted= false;
-
-    private Polyline currentPolyline;
-
-    public static final double LAT=34.06491212039849;
-    public static final double LONG=-5.005186423818804;
-
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 200;
     private boolean gps_enabled=false;
     private LocationManager locationManager;
-
-
-    private static final int GPS_REQUEST_CODE = 100;
-
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
-
     private DatabaseReference ref;
-    private DestinationDB destinationDB;
-
-
     //for stop backgound services
     private boolean stop=false;
+
+    private int counterForUpdateTimeDestination = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_position);
-        destinationDB=new DestinationDB(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         ref=CustomFirebase.getDataRefLevel1(getString(R.string.OnlineUserLocation));
-
-
         markerOptions = new MarkerOptions();
 
         locationCallback = new LocationCallback()
@@ -101,25 +81,30 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
             {
 
                 super.onLocationResult(locationResult);
-                //test if we have internet
-                //  connected=internet.conected();
+
                 for (Location location : locationResult.getLocations())
                 {
-
                     if (location != null )
 
                     {
+                        counterForUpdateTimeDestination++;
+
                         GeoPoint geoPoint=new GeoPoint();
                         geoPoint.setLongitude(location.getLongitude());
                         geoPoint.setLatitude(location.getLatitude());
                         geoPoint.setTime(location.getTime());
                         geoPoint.setSpeed(location.getSpeed());
 
-                        origin=new LatLng(location.getLongitude(),location.getLatitude());
-                        moveCamera(new LatLng(location.getLongitude(),location.getLatitude()),DEFAULT_ZOOM);
+                        origin = new LatLng(location.getLatitude(), location.getLongitude());
+                        if (counterForUpdateTimeDestination == 600) {
+                            String url = ShowDirection.getUrl(origin, new DestinationDB(UserPosition.this).getDestination(), "driving", getString(R.string.google_map_api));
+                            new FetchURL(UserPosition.this).execute(url, "driving");
+                            counterForUpdateTimeDestination = 0;
+
+
+                        }
+                        moveCamera(origin, Constants.DEFAULT_ZOOM);
                         ref.child(CustomFirebase.getCurrentUser().getUid()).setValue(geoPoint);
-
-
 
                     }
 
@@ -160,30 +145,18 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
             markerOptions= new MarkerOptions();
         markerOptions.position(latLng);
         mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom - 4));
     }//end moveCamera()
-
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        Intent intent=getIntent();
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
 
 
-                mMap.addMarker(new MarkerOptions().position(latLng));
-
-
-
-            }
-        });//end of map click listener
     }
-
 
 
     private boolean isGPSEnabled() {
@@ -231,12 +204,11 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
 
     public void showDirection(View view)
         {
-            destination=destinationDB.getDestination();
-
+            // destination=destinationDB.getDestination();
             Intent intent=new Intent(this,ChooseDestinationLocation.class);
             intent.putExtra(TAG,TAG);
             intent.putExtra("origin",origin);
-            Log.d(TAG,"origin="+origin.toString());
+
             startActivity(intent);
 
        }//end of showDirection
@@ -253,7 +225,7 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
         {
             mLocationPermissionGranted = true;
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, Constants.REQUEST_FINE_LOCATION);
         }
     }//end of getLocationPermission
 
@@ -263,7 +235,7 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
         mLocationPermissionGranted = false;
         switch (requestCode)
         {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+            case Constants.REQUEST_FINE_LOCATION:
             {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -318,8 +290,10 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
         stopService();
         stop=true;
         stopLocationUpdates();
+        DestinationDB destinationDB = new DestinationDB(this);
+        destinationDB.deleteDestination();
+        startActivity(new Intent(this, HomeUser.class));
         finish();
-
     }//end of stop()//work is done
 
 
@@ -327,6 +301,7 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
+
         stopService();
         if(gps_enabled=isGPSEnabled())
         {
@@ -337,11 +312,20 @@ public class UserPosition extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
-        if(!stop)
-        {
+        if (!stop) {
             stopLocationUpdates();
             startService();
         }
+
+    }
+
+    @Override
+    public void onTaskDone(String distance, String duration, Object... values) {
+        String userkey = CustomFirebase.getCurrentUser().getUid();
+
+        CustomFirebase.getDataRefLevel1(getString(R.string.DurationToDestination)).child(userkey).child("duration").setValue(duration);
+        CustomFirebase.getDataRefLevel1(getString(R.string.DurationToDestination)).child(userkey).child("distance").setValue(distance);
+
 
     }
 }

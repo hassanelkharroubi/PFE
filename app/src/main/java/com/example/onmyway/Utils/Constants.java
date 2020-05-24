@@ -4,7 +4,7 @@ import android.Manifest;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class Constants {
+public final class Constants {
 
     public static final int GOOGLE_PLAY_SERVICES_REQUEST=1;
     public final static long UPDATE_INTERVAL = 4 * 1000;  /* 4 secs */

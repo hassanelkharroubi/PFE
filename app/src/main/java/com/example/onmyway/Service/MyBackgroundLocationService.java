@@ -11,9 +11,9 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.onmyway.DB.CustomFirebase;
+import com.example.onmyway.Models.CustomFirebase;
+import com.example.onmyway.Models.GeoPoint;
 import com.example.onmyway.R;
-import com.example.onmyway.User.Models.GeoPoint;
 import com.example.onmyway.User.View.UserPosition;
 import com.example.onmyway.Utils.Constants;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -63,7 +63,6 @@ public class MyBackgroundLocationService extends Service {
                         geoPoint.setLatitude(location.getLatitude());
                         geoPoint.setTime(location.getTime());
                         geoPoint.setSpeed(location.getSpeed());
-
                         mDatabase.child(currentUser.getUid()).setValue(geoPoint);
                     }
 

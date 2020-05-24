@@ -16,13 +16,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.onmyway.DB.CustomFirebase;
-import com.example.onmyway.DB.UserDB;
+import com.example.onmyway.Models.Administrateur;
+import com.example.onmyway.Models.CustomFirebase;
+import com.example.onmyway.Models.User;
+import com.example.onmyway.Models.UserDB;
 import com.example.onmyway.R;
-import com.example.onmyway.User.Models.User;
 import com.example.onmyway.Utils.CustomToast;
-import com.example.onmyway.administrateur.Models.Administrateur;
-import com.example.onmyway.connection.Internet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -49,22 +48,14 @@ public class RegisterActivity extends AppCompatActivity {
     private String password;
     private EditText editTextPassword;
 
-    private String confirmPassword;
     private EditText editTextConfirmPassword;
 
     private User user;
     private FirebaseAuth mAuth;
-    private FirebaseDatabase database;
     private DatabaseReference myRef;
 
     //for sqlite data base
     private UserDB userDB;
-    //check internet
-    Internet internet;
-    //boolean for check if there network or not
-    //intialize it in onResume() method
-    private Boolean connected;
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -74,16 +65,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_register);
 
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference(getResources().getString(R.string.UserData));
         userDB=new UserDB(this);
         //start new Thread to check network state and internet acess
-
-        connected=new Internet(this).connected();
-
-
-
-
 
 
         //get toolbar_layout
@@ -115,9 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
 }
 
-
     public void register(View view) {
-        connected=new Internet(this).connected();
 
 
         if(allInputValid())
@@ -134,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 //i the same time we have to add this user to local data base
                                 userDB.addUser(user);
 
-                                CustomToast.toast("Authentication success.",RegisterActivity.this);
+                                CustomToast.toast(RegisterActivity.this, "Authentication success.");
 
                                 mAuth.signOut();
                                 mAuth.signInWithEmailAndPassword(Administrateur.email,Administrateur.password);
@@ -144,7 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
                             else
                             {
 
-                                CustomToast.toast("on ne peut pas ajouter neveau utilidateur !Verfier votre connection.",RegisterActivity.this);
+                                CustomToast.toast(RegisterActivity.this, "on ne peut pas ajouter neveau utilidateur !Verfier votre connection.");
 
 
                             }
@@ -155,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
         else
         {
 
-            CustomToast.toast("Veuilez verifier les donnees que vouz avez saisi ....!",this);
+            CustomToast.toast(this, "Veuilez verifier les donnees que vouz avez saisi ....!");
         }
 
 
@@ -189,11 +172,11 @@ public class RegisterActivity extends AppCompatActivity {
         fullName=editTextFullName.getText().toString().trim();
         email=editTextEmail.getText().toString().trim();
         password=editTextPassword.getText().toString();
-        confirmPassword=editTextConfirmPassword.getText().toString();
+        String confirmPassword = editTextConfirmPassword.getText().toString();
        if(!cin.isEmpty() && !fullName.isEmpty() && isEmail(email)
                && !password.isEmpty() && password.equals(confirmPassword))
        {
-           user=new User(fullName,email,password,cin);
+           user = new User(fullName, email, password, cin.toUpperCase());
            return true;
        }
        return  false;
@@ -201,12 +184,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        connected=new Internet(this).connected();
 
-    }
 
 
 }

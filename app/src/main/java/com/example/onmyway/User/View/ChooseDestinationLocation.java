@@ -2,17 +2,21 @@ package com.example.onmyway.User.View;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.onmyway.DB.DestinationDB;
 import com.example.onmyway.GoogleDirection.FetchURL;
+import com.example.onmyway.GoogleDirection.ShowDirection;
 import com.example.onmyway.GoogleDirection.TaskLoadedCallback;
+import com.example.onmyway.Models.CustomFirebase;
+import com.example.onmyway.Models.DestinationDB;
 import com.example.onmyway.R;
+import com.example.onmyway.Service.GeoCoding;
+import com.example.onmyway.Service.GeoCodingDoneListener;
+import com.example.onmyway.Utils.CheckLogin;
 import com.example.onmyway.Utils.Constants;
 import com.example.onmyway.Utils.CustomToast;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,40 +29,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.IOException;
-
-public class ChooseDestinationLocation extends AppCompatActivity implements OnMapReadyCallback, TaskLoadedCallback {
+public class ChooseDestinationLocation extends AppCompatActivity implements OnMapReadyCallback, TaskLoadedCallback, GeoCodingDoneListener {
 
     private static final String TAG = "chooseLocation";
-
-
-
-
-
-
     private GoogleMap mMap;
-    private SupportMapFragment mapFragment;
     private MarkerOptions locationMarker;
     private Marker marker;
     Polyline currentPolyline;
 
     //for database
     private DestinationDB destinationDB;
-
-
-
+    private LatLng latLngDestination;
+    private LatLng origin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_destination_location);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        if (CheckLogin.toLogin(this)) finish();
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         locationMarker=new MarkerOptions();
         mapFragment.getMapAsync(this);
-
         destinationDB=new DestinationDB(this);
-
-
-
 
     }//end of onCreate()
 
@@ -68,6 +59,7 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
+        //only for show maroccain map at the first time
         LatLng maroc=new LatLng(31.7218851,-11.6443955);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(maroc, Constants.DEFAULT_ZOOM - 10));
@@ -76,58 +68,24 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
             @Override
             public void onMapClick(LatLng latLng) {
 
-                LatLng destination=destinationDB.getDestination();
-                if(destination==null)
-                {
-                    Log.d(TAG,"destination is null");
-                }
-                else
-                {
-                    destinationDB.deleteDestination();
-                }
+                latLngDestination = latLng;
+
+                destinationDB.deleteDestination();
+
                 destinationDB.addDestination(latLng);
 
                 if(marker!=null)
                     marker.remove();
                 locationMarker.position(latLng);
                 marker=  mMap.addMarker(locationMarker);
-                Geocoder geocoder=new Geocoder(ChooseDestinationLocation.this);
-                try {
-
-                    String address=geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
-
-
-                    confirm(address,latLng,address);
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                    sendIntent(latLng,"click commencer ou choisir une destination");
-                }
-
+                new GeoCoding(ChooseDestinationLocation.this).execute(latLng);
 
             }
         });
     }//end of onMapReady()
 
-    public static String getUrl(LatLng origin,LatLng dest,String mode,String api_key) {
 
 
-        String ori="origin="+origin.latitude+","+origin.longitude;
-        String destination="destination="+dest.latitude+","+dest.longitude;
-
-        String direction=ori+"&"+destination;
-
-        String key="key="+api_key;
-        String modeDirection="mode="+mode;
-        String parameters=direction+"&"+modeDirection;
-        String outputFormat="json";
-        Log.i(TAG,"inside getUrl");
-       return  "https://maps.googleapis.com/maps/api/directions/"+outputFormat+"?"+parameters+"&"+key;
-
-
-    }//end of getUrl()
 
     private void confirm(String msg,final LatLng latLng,final String address)
     {
@@ -135,6 +93,7 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
 
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                Log.d(TAG, "send intent");
                 sendIntent(latLng,address);
                 finish();
 
@@ -143,19 +102,26 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
         builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //zoom in for more places
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,Constants.DEFAULT_ZOOM));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM - 5));
 
             }
         });
 
+        if (msg == null) {
+            builder.setMessage("Veuillez confimer le choix de destination ").create().show();
 
-        builder.setMessage("Veuillez confimer le choix de destination "+msg).create().show();
+        } else
+            builder.setMessage("Veuillez confimer le choix de destination " + msg).create().show();
+
+
+
 
 
     }//end of confirm()
 
-    private void sendIntent(LatLng latLng,String address)
+    private void sendIntent(LatLng latLng, String address)
     {
+        Log.d(TAG, "send intent inside senIntent()" + latLng.toString() + "adresse =" + address);
         Intent intent=new Intent(this,HomeUser.class);
         intent.putExtra("latlng",latLng);
         intent.putExtra("address",address);
@@ -165,13 +131,20 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
     @Override
     public void onTaskDone(String distance,String duration,Object... values) {
 
-        Log.i(TAG,"inside inteface");
+        String userkey = CustomFirebase.getCurrentUser().getUid();
 
-        if(currentPolyline!=null)
+        CustomFirebase.getDataRefLevel1(getString(R.string.DurationToDestination)).child(userkey).child("duration").setValue(duration);
+        CustomFirebase.getDataRefLevel1(getString(R.string.DurationToDestination)).child(userkey).child("distance").setValue(distance);
+        CustomToast.toast(this, "Il reste " + duration);
+
+        if(currentPolyline!=null) {
+
             currentPolyline.remove();
+        }
        currentPolyline= mMap.addPolyline((PolylineOptions) values[0]);
-    }//end of onTaskDone();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(origin, Constants.DEFAULT_ZOOM + 10));
 
+    }//end of onTaskDone();
     @Override
     protected void onResume() {
         super.onResume();
@@ -179,25 +152,34 @@ public class ChooseDestinationLocation extends AppCompatActivity implements OnMa
         Intent intent=getIntent();
         if(intent.hasExtra(UserPosition.TAG))
         {
-            LatLng destination=destinationDB.getDestination();
-            LatLng origin=intent.getParcelableExtra("origin");
-            Log.d(TAG,"hello ="+destination.toString()+" "+origin.toString());
+            origin = intent.getParcelableExtra("origin");
             if(origin!=null)
             {
-                String url=getUrl(origin,destination,"driving",getString(R.string.google_map_api));
-                Log.d(TAG,url);
+                String url = ShowDirection.getUrl(origin, new DestinationDB(this).getDestination(), "driving", getString(R.string.google_map_api));
+                Log.d("url", url);
                 new FetchURL(this).execute(url,"driving");
             }
             else
-                CustomToast.toast("pas de direction ",this);
-
+                CustomToast.toast(this, "pas de direction ");
         }
-
 
     }//end of onResume()
 
 
+    @Override
+    public void geoCodingDone(Object result) {
+        if (result != null) {
+            if (result instanceof String) {
+                confirm((String) result, latLngDestination, (String) result);
 
+            } else {
+                confirm(null, latLngDestination, "commencer le travail ou choisir une destination");
+                // sendIntent(,"click commencer ou choisir une destination");
 
+            }
+        } else {
+            CustomToast.toast(this, "Veuillez connecter au internet");
+        }
 
+    }
 }

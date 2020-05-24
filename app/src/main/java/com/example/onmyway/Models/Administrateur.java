@@ -1,4 +1,4 @@
-package com.example.onmyway.administrateur.Models;
+package com.example.onmyway.Models;
 
 public class Administrateur {
 
